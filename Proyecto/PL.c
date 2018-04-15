@@ -41,10 +41,10 @@ Z cuerpo_funcion_objetivo (Z objetivo)
 	for (ptr = funcion_objetivo, i = 0, numero_variables = 0; * ptr != '\0'; ptr ++)
 	{
 		//COEFICIENTES
-		if (((* ptr >= '0') && (* ptr <= '9')) || ((* ptr == '.') || (* ptr == '-')))
+		if ((((* ptr) >= '0') && ((* ptr) <= '9')) || ((* ptr) == '.') || ((* ptr) == '-'))
 			coeficiente [i ++] = (* ptr);
 		//VARIABLES
-		if (((* ptr >= 'a') && (* ptr <= 'z')) || (* ptr >= 'A') && (* ptr <= 'Z'))
+		if ((((* ptr) >= 'a') && ((* ptr) <= 'z')) || (((* ptr) >= 'A') && ((* ptr) <= 'Z')))
 		{
 			coeficiente [i] = ('\0');
 			variables [numero_variables] = (* ptr);
@@ -96,10 +96,10 @@ restriccion cuerpo_restriccion (char numero_restriccion)
 	for (ptr = rest, i = 0, numero_variables = 0; * ptr != '\0'; ptr ++)
 	{
 		//COEFICIENTES
-		if (((* ptr >= '0') && (* ptr <= '9')) || ((* ptr == '.') || (* ptr == '-')))
+		if ((((* ptr) >= '0') && ((* ptr) <= '9')) || ((* ptr) == '.') || ((* ptr) == '-'))
 			coeficiente [i ++] = * ptr;
 		//VARIABLES
-		if (((* ptr >= 'a') && (* ptr <= 'z')) || (* ptr >= 'A') && (* ptr <= 'Z'))
+		if ((((* ptr) >= 'a') && ((* ptr) <= 'z')) || ((* ptr) >= 'A') && ((* ptr) <= 'Z'))
 		{
 			coeficiente [i] = '\0';
 			variables [numero_variables] = (* ptr);
@@ -107,7 +107,7 @@ restriccion cuerpo_restriccion (char numero_restriccion)
 			i = 0;
 		}
 		//COMPARADOR
-		if ((* ptr == '>') || (* ptr == '<'))
+		if (((* ptr) == '>') || ((* ptr) == '<'))
 			(res.comparador) = (* ptr);
 	}
 	coeficiente [i] = '\0';
