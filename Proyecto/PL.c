@@ -53,10 +53,13 @@ Z cuerpo_funcion_objetivo (Z objetivo)
 			i = 0;
 		}
 	}
-	variables [numero_variables] = ('\0');
-	coeficientes [numero_variables] = ('\0');
-	(aux.variables) = variables;
-	(aux.coeficientes) = coeficientes;
+	(aux.variables) = (char * ) malloc (sizeof (char) * numero_variables);
+	(aux.coeficientes) = (float * ) malloc (sizeof (float) * numero_variables);
+	for (i = 0; i < numero_variables; i ++)
+	{
+		(aux.variables [i]) = variables [i];
+		(aux.coeficientes [i]) = coeficientes [i];
+	}
 	free (variables);
 	free (coeficiente);
 	free (coeficientes);
@@ -111,11 +114,14 @@ restriccion cuerpo_restriccion (char numero_restriccion)
 			(res.comparador) = (* ptr);
 	}
 	coeficiente [i] = '\0';
-	variables [numero_variables] = '\0';
-	coeficientes [numero_variables] = '\0';
-	(res.variables) = variables;
-	(res.coeficientes) = coeficientes;
 	(res.limite) = ((float) atof (coeficiente));
+	(res.variables) = (char * ) malloc (sizeof (char) * numero_variables);
+	(res.coeficientes) = (float * ) malloc (sizeof (float) * numero_variables);
+	for (i = 0; i < numero_variables; i ++)
+	{
+		(res.variables [i]) = variables [i];
+		(res.coeficientes [i]) = coeficientes [i];
+	}
 	free (rest);
 	free (variables);
 	free (coeficiente);
