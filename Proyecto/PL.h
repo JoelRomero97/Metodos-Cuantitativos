@@ -1,4 +1,23 @@
 #include "Lista.h"
+#ifdef __linux__
+#define clear "clear"
+#endif
+#ifdef __MINGW32__
+#define clear "cls"
+#endif
+#define IT_MAX 100						//Número máximo de iteraciones
+#define ERROR_MAXIMO 0.05				//Porcentaje máximo de error (5%)
+#define TIEMPO_MAXIMO 5					//Tiempo máximo de procesamiento en minutos
+
+//Estructura para almacenar algunos valores del algoritmo
+typedef struct algoritmo
+{
+	char bits_precision;				//Almacena el número de bits de precisión
+	char integrantes;					//Almacena el número de integrantes de la población
+	char tiempo_maximo;					//Almacena el tiempo máximo de resolución (minutos)
+	char error_maximo;					//Almacena el error máximo permitido (porcentaje)
+	int it_max;							//Almacena el número de iteraciones máximas del problema
+}algoritmo;
 
 //Estructura para almacenar la Función Objetivo
 typedef struct Z

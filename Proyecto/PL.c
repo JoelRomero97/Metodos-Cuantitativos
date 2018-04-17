@@ -35,15 +35,16 @@ Z cuerpo_funcion_objetivo (Z objetivo)
 	char * funcion_objetivo = (char *) malloc (sizeof (char));				//Almacena la F.O
 	char * ptr;																//Apuntador a la F.O para ciclo
 	char i;																	//Auxiliar para manejar ciclos
-	system ("cls");
+	system (clear);
 	printf ("\nINGRESA LA FUNCI%cN OBJETIVO:\t", 224);
 	scanf ("%s", funcion_objetivo);
+	//Se recorre la función objetivo en busca de números (coeficientes) o letras (variables)
 	for (ptr = funcion_objetivo, i = 0, numero_variables = 0; * ptr != '\0'; ptr ++)
 	{
-		//COEFICIENTES
+		//COEFICIENTES (Con punto decimal y negativos)
 		if ((((* ptr) >= '0') && ((* ptr) <= '9')) || ((* ptr) == '.') || ((* ptr) == '-'))
 			coeficiente [i ++] = (* ptr);
-		//VARIABLES
+		//VARIABLES (Letras mayúsculas y/o minúsculas)
 		if ((((* ptr) >= 'a') && ((* ptr) <= 'z')) || (((* ptr) >= 'A') && ((* ptr) <= 'Z')))
 		{
 			coeficiente [i] = ('\0');
@@ -53,8 +54,10 @@ Z cuerpo_funcion_objetivo (Z objetivo)
 			i = 0;
 		}
 	}
+	//Se inicializan los apuntadores de la estructura de la F.O dependiendo el número de variables leídas
 	(aux.variables) = (char * ) malloc (sizeof (char) * numero_variables);
 	(aux.coeficientes) = (float * ) malloc (sizeof (float) * numero_variables);
+	//Se guarda el valor de los coeficientes y la variable correspondiente en la estructura de la F.O
 	for (i = 0; i < numero_variables; i ++)
 	{
 		(aux.variables [i]) = variables [i];
@@ -75,7 +78,9 @@ lista obtener_restricciones ()
 	Initialize (&restricciones);											//Inicializamos la lista de restricciones
 	while (otra != FALSE)
 	{
+		//Se obtienen los coeficientes y las variables de la restricción i-ésima
 		res = cuerpo_restriccion (i + 1);
+		//Se almacena esa restricción en una lista de restricciones
 		Add (&restricciones, res);
 		printf ("\n%cDeseas ingresar otra restricci%cn?\t\t1.Si\t\t0.No\t\t", 168, 162);
 		scanf ("%d", &otra);
@@ -96,12 +101,13 @@ restriccion cuerpo_restriccion (char numero_restriccion)
 	char i;																	//Auxiliar para manejar ciclos
 	printf ("\nINGRESA LA RESTRICCION %d: ", numero_restriccion);
 	scanf ("%s", rest);
+	//Se recorre la restricción en busca de números (coeficientes) o letras (variables)
 	for (ptr = rest, i = 0, numero_variables = 0; * ptr != '\0'; ptr ++)
 	{
-		//COEFICIENTES
+		//COEFICIENTES (Con punto decimal y negativos)
 		if ((((* ptr) >= '0') && ((* ptr) <= '9')) || ((* ptr) == '.') || ((* ptr) == '-'))
 			coeficiente [i ++] = * ptr;
-		//VARIABLES
+		//VARIABLES (Letras mayúsculas y/o minúsculas)
 		if ((((* ptr) >= 'a') && ((* ptr) <= 'z')) || ((* ptr) >= 'A') && ((* ptr) <= 'Z'))
 		{
 			coeficiente [i] = '\0';
@@ -109,14 +115,16 @@ restriccion cuerpo_restriccion (char numero_restriccion)
 			coeficientes [numero_variables ++] = (float) atof (coeficiente);
 			i = 0;
 		}
-		//COMPARADOR
+		//COMPARADOR (mayor/menor, el signo igual está implícito)
 		if (((* ptr) == '>') || ((* ptr) == '<'))
 			(res.comparador) = (* ptr);
 	}
 	coeficiente [i] = '\0';
+	//Se inicializan los apuntadores de la estructura de la restricción dependiendo el número de variables leídas
 	(res.limite) = ((float) atof (coeficiente));
 	(res.variables) = (char * ) malloc (sizeof (char) * numero_variables);
 	(res.coeficientes) = (float * ) malloc (sizeof (float) * numero_variables);
+	//Se guarda el valor de los coeficientes y la variable correspondiente en la estructura de la restricción
 	for (i = 0; i < numero_variables; i ++)
 	{
 		(res.variables [i]) = variables [i];

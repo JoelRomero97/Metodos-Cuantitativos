@@ -17,11 +17,9 @@ int main(int argc, char const *argv[])
 	Z funcion_objetivo;															//Estructura para almacenar la F.O
 	lista restricciones;														//Lista para almacenar las restricciones
 	Initialize (&restricciones);												//Inicializamos la lista de restricciones
-	system ("cls");
-	//Obtener la función objetivo del problema
-	funcion_objetivo = obtener_funcion_objetivo ();
-	//Obtener las restricciones del problema
-	restricciones = obtener_restricciones ();
+	system (clear);
+	funcion_objetivo = obtener_funcion_objetivo ();								//Obtener la función objetivo del problema
+	restricciones = obtener_restricciones ();									//Obtener las restricciones del problema
 	imprimir_problema_inicial (funcion_objetivo, &restricciones);
 	return 0;
 }
