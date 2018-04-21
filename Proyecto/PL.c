@@ -4,6 +4,24 @@
 #include <math.h>
 #include "PL.h"
 
+Condiciones_AG obtener_condiciones_iniciales ()
+{
+	Condiciones_AG auxiliar;												//Estructura para almacenar las condiciones del problema
+	system (clear);
+	printf ("\n______________________________ALGORITMOS GENÉTICOS______________________________\n");
+	printf ("\n\nIngresa el tiempo máximo de procesamiento (minutos):\t");
+	scanf ("%hhd", &auxiliar.tiempo_maximo);
+	printf ("\n\nIngresa el error máximo permitido (porcentaje):\t");
+	scanf ("%f", &auxiliar.error_maximo);
+	auxiliar.error_maximo = (auxiliar.error_maximo * 0.01);
+	printf ("\n\nIngresa el número máximo de iteraciones:\t");
+	scanf ("%d", &auxiliar.it_max);
+	printf ("\n\nIngresa el número de bits de precisión deseados:\t");
+	scanf ("%hhd", &auxiliar.bits_precision);
+	printf ("\n\nIngresa el número de integrantes por población:\t");
+	scanf ("%hhd", &auxiliar.integrantes);
+}
+
 Z obtener_funcion_objetivo ()
 {
 	Z funcion_objetivo;
@@ -17,7 +35,7 @@ Z obtener_funcion_objetivo ()
 int criterio_funcion_objetivo ()
 {
 	int criterio;
-	printf ("\nSelecciona el criterio a aplicar:\n\n1. Maximizar\t\t2.Minimizar\t\t");
+	printf ("\n\nSelecciona el criterio a aplicar:\t1. Maximizar\t\t2.Minimizar\n\n");
 	scanf ("%d", &criterio);
 	if (criterio == 2)
 		return -1;
@@ -36,7 +54,7 @@ Z cuerpo_funcion_objetivo (Z objetivo)
 	char * ptr;																//Apuntador a la F.O para ciclo
 	char i;																	//Auxiliar para manejar ciclos
 	system (clear);
-	printf ("\nINGRESA LA FUNCI%cN OBJETIVO:\t", 224);
+	printf ("\nINGRESA LA FUNCIÓN OBJETIVO:\t");
 	scanf ("%s", funcion_objetivo);
 	//Se recorre la función objetivo en busca de números (coeficientes) o letras (variables)
 	for (ptr = funcion_objetivo, i = 0, numero_variables = 0; * ptr != '\0'; ptr ++)
@@ -47,10 +65,13 @@ Z cuerpo_funcion_objetivo (Z objetivo)
 		//VARIABLES (Letras mayúsculas y/o minúsculas)
 		if ((((* ptr) >= 'a') && ((* ptr) <= 'z')) || (((* ptr) >= 'A') && ((* ptr) <= 'Z')))
 		{
+			//Si se encuentra una variable, ya terminó el coeficiente de dicha variable
 			coeficiente [i] = ('\0');
+			//En las variables se almacena la variable leída
 			variables [numero_variables] = (* ptr);
-			coeficientes [numero_variables] = (((float) atof (coeficiente)) * (objetivo.criterio));
-			numero_variables ++;
+			//En los coeficientes se almacena el número leído convertido a flotante
+			coeficientes [numero_variables ++] = (((float) atof (coeficiente)) * (objetivo.criterio));
+			//Se comienza a almacenar un nuevo coeficiente
 			i = 0;
 		}
 	}
@@ -82,8 +103,8 @@ lista obtener_restricciones ()
 		res = cuerpo_restriccion (i + 1);
 		//Se almacena esa restricción en una lista de restricciones
 		Add (&restricciones, res);
-		printf ("\n%cDeseas ingresar otra restricci%cn?\t\t1.Si\t\t0.No\t\t", 168, 162);
-		scanf ("%d", &otra);
+		printf ("\n¿Deseas ingresar otra restricción?\t\t1.Si\t\t0.No\t\t");
+		scanf ("%hhd", &otra);
 		i ++;
 	}
 	return restricciones;
@@ -99,7 +120,7 @@ restriccion cuerpo_restriccion (char numero_restriccion)
 	char * rest = (char *) malloc (sizeof (char));							//Almacena la restricción ingresada
 	char * ptr;																//Apuntador a la restricción para ciclo
 	char i;																	//Auxiliar para manejar ciclos
-	printf ("\nINGRESA LA RESTRICCION %d: ", numero_restriccion);
+	printf ("\nINGRESA LA RESTRICCIÓN %d: ", numero_restriccion);
 	scanf ("%s", rest);
 	//Se recorre la restricción en busca de números (coeficientes) o letras (variables)
 	for (ptr = rest, i = 0, numero_variables = 0; * ptr != '\0'; ptr ++)
@@ -110,13 +131,19 @@ restriccion cuerpo_restriccion (char numero_restriccion)
 		//VARIABLES (Letras mayúsculas y/o minúsculas)
 		if ((((* ptr) >= 'a') && ((* ptr) <= 'z')) || ((* ptr) >= 'A') && ((* ptr) <= 'Z'))
 		{
+			//Si se encuentra una variable, ya terminó el coeficiente de dicha variable
 			coeficiente [i] = '\0';
+			//En las variables se almacena la variable leída
 			variables [numero_variables] = (* ptr);
+			//En los coeficientes se almacena el número leído convertido a flotante
 			coeficientes [numero_variables ++] = (float) atof (coeficiente);
+			//Se comienza a almacenar un nuevo coeficiente
 			i = 0;
 		}
 		//COMPARADOR (mayor/menor, el signo igual está implícito)
 		if (((* ptr) == '>') || ((* ptr) == '<'))
+			(res.comparador) = (* ptr);
+		if (((* ptr) == '=') && (((* ptr - 1) != '<') || ((* ptr - 1) != '>')))
 			(res.comparador) = (* ptr);
 	}
 	coeficiente [i] = '\0';
@@ -141,17 +168,17 @@ void imprimir_problema_inicial (Z objetivo, lista * restricciones)
 {
 	restriccion r;
 	int i, j, numero_restricciones;
-	printf ("\n\nFUNCION OBJETIVO:\t");
+	printf ("\n\nFUNCIÓN OBJETIVO:\t");
 	for (i = 0; i < strlen (objetivo.variables); i ++)
 	{
 		if (i == 0)
-			printf ("%f%c%c", objetivo.coeficientes [i], 250, objetivo.variables [i]);
+			printf ("%f%c", objetivo.coeficientes [i], objetivo.variables [i]);
 		else
 		{
 			if ((objetivo.coeficientes [i]) >= 0)
-				printf ("+%f%c%c", objetivo.coeficientes [i], 250, objetivo.variables [i]);
+				printf ("+%f%c", objetivo.coeficientes [i], objetivo.variables [i]);
 			else
-				printf ("%f%c%c", objetivo.coeficientes [i], 250, objetivo.variables [i]);
+				printf ("%f%c", objetivo.coeficientes [i], objetivo.variables [i]);
 		}
 	}
 	printf ("\n\nRESTRICCIONES:\n");
@@ -165,17 +192,18 @@ void imprimir_problema_inicial (Z objetivo, lista * restricciones)
 			for (j = 0; j < strlen (r.variables); j ++)
 			{
 				if (j == 0)
-					printf ("%f%c%c", r.coeficientes [j], 250, r.variables [j]);
+					printf ("%f%c", r.coeficientes [j], r.variables [j]);
 				else
 				{
 					if ((r.coeficientes [j]) >= 0)
-						printf ("+%f%c%c", r.coeficientes [j], 250, r.variables [j]);
+						printf ("+%f%c", r.coeficientes [j], r.variables [j]);
 					else
-						printf ("%f%c%c", r.coeficientes [j], 250, r.variables [j]);
+						printf ("%f%c", r.coeficientes [j], r.variables [j]);
 				}
 			}
 			printf (" %c= %f", r.comparador, r.limite);
 		}
+		printf ("\n\n");
 	}else
 		printf ("\n\nNo existen restricciones\n\n");
 	return;

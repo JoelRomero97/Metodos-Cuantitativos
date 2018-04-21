@@ -6,7 +6,7 @@ typedef struct elemento
 {
 	float * coeficientes;				//Almacena los coeficientes de la restricción
 	char * variables;					//Almacena las variables de la restricción
-	char comparador;					//Almacena el operador '>' o '<'
+	char comparador;					//Almacena el operador '>', '<' o '='
 	float limite;						//Almacena el límite de la restricción
 }restriccion;
 

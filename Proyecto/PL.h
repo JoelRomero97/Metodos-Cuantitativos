@@ -9,15 +9,15 @@
 #define ERROR_MAXIMO 0.05				//Porcentaje máximo de error (5%)
 #define TIEMPO_MAXIMO 5					//Tiempo máximo de procesamiento en minutos
 
-//Estructura para almacenar algunos valores del algoritmo
-typedef struct algoritmo
+//Estructura para almacenar algunas condiciones iniciales del problema
+typedef struct Condiciones_AG
 {
+	char tiempo_maximo;					//Almacena el tiempo máximo de resolución (minutos)
+	float error_maximo;					//Almacena el error máximo permitido (porcentaje)
+	int it_max;							//Almacena el número de iteraciones máximas del problema
 	char bits_precision;				//Almacena el número de bits de precisión
 	char integrantes;					//Almacena el número de integrantes de la población
-	char tiempo_maximo;					//Almacena el tiempo máximo de resolución (minutos)
-	char error_maximo;					//Almacena el error máximo permitido (porcentaje)
-	int it_max;							//Almacena el número de iteraciones máximas del problema
-}algoritmo;
+}Condiciones_AG;
 
 //Estructura para almacenar la Función Objetivo
 typedef struct Z
@@ -32,4 +32,5 @@ int criterio_funcion_objetivo ();
 Z cuerpo_funcion_objetivo (Z objetivo);
 lista obtener_restricciones ();
 restriccion cuerpo_restriccion (char numero_restriccion);
+Condiciones_AG obtener_condiciones_iniciales ();
 void imprimir_problema_inicial (Z objetivo, lista * restricciones);
