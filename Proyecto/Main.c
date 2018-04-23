@@ -13,6 +13,8 @@ Compilar y ejecutar:
 
 int main(int argc, char const *argv[])
 {
+
+	Limites *lim;
 	char i;																		//Auxiliar utilizado como contador
 	Z funcion_objetivo;															//Estructura para almacenar la F.O
 	lista restricciones;														//Lista para almacenar las restricciones
@@ -23,5 +25,6 @@ int main(int argc, char const *argv[])
 	funcion_objetivo = obtener_funcion_objetivo ();								//Obtener la función objetivo del problema
 	restricciones = obtener_restricciones ();									//Obtener las restricciones del problema
 	imprimir_problema_inicial (funcion_objetivo, &restricciones);
+	lim = obtener_limites_variables(&restricciones);
 	return 0;
 }
