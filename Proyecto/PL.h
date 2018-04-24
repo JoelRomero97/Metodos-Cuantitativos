@@ -28,7 +28,8 @@ typedef struct Z
 }Z;
 
 //Estructura para almacenar los limites de las variables
-typedef struct limites{
+typedef struct limites
+{
 	float inferior;						//Almacena el limite inferior
 	float superior;						//Almacena el limite superior
 	char variable;						//Almacena la variable asociada a los limites
@@ -42,10 +43,10 @@ restriccion cuerpo_restriccion (char numero_restriccion);
 Condiciones_AG obtener_condiciones_iniciales ();
 void imprimir_problema_inicial (Z objetivo, lista * restricciones);
 
-lista obtener_restricciones_dependientes(lista *restricciones,char var);
-Limites obtenerValoresLimites(lista *restricciones,char var);
-Limites* obtener_limites_variables(lista *restricciones);
+lista obtener_restricciones_dependientes (lista * restricciones, char variable);
+Limites obtener_valores_limites (lista * restricciones, char variable);
+Limites* obtener_limites_variables (lista * restricciones);
 
-void printR(lista* restricciones);
-void shell_sort(float *A, int n);
-int comp(const void * a, const void * b);
+void printR (lista * restricciones);
+void shell_sort (float *A, int n);
+int comp (const void * a, const void * b);
