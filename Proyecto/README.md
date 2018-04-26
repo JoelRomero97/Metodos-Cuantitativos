@@ -2,6 +2,6 @@
 
 # Autores
 
-[Garduño Velázquez Alan] (https://github.com/AlanGarduno)
+[Garduño Velázquez Alan](https://github.com/AlanGarduno)
 
-[Romero Gamarra Joel Mauricio] (https://github.com/JoelRomero97)
+[Romero Gamarra Joel Mauricio](https://github.com/JoelRomero97)
