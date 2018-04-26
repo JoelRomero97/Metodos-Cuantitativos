@@ -25,6 +25,6 @@ int main(int argc, char const *argv[])
 	funcion_objetivo = obtener_funcion_objetivo ();								//Obtener la función objetivo del problema
 	restricciones = obtener_restricciones ();									//Obtener las restricciones del problema
 	imprimir_problema_inicial (funcion_objetivo, &restricciones);
-	lim = obtener_limites_variables(&restricciones);
+	lim = obtener_limites_variables(&restricciones,funcion_objetivo);
 	return 0;
 }

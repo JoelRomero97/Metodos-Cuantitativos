@@ -110,6 +110,7 @@ lista obtener_restricciones ()
 	return restricciones;
 }
 
+
 restriccion cuerpo_restriccion (char numero_restriccion)
 {
 	restriccion res;
@@ -212,6 +213,7 @@ void imprimir_problema_inicial (Z objetivo, lista * restricciones)
 lista obtener_restricciones_dependientes(lista *restricciones,char var){
 	lista restric;
 	restriccion r;
+	restriccion aux;
 	int i,j;
 	int tam=0;
 	Initialize(&restric);
@@ -220,6 +222,10 @@ lista obtener_restricciones_dependientes(lista *restricciones,char var){
 		r = Element(restricciones, i+1);
 		for (j = 0; j < strlen(r.variables);j++)
 		{
+			/*if(r.comparador == '>'){
+				aux = invertir_restriccion(r);
+				Add(&restric,aux);
+			}*/
 			if(r.variables[j] == var){
 				Add(&restric,r);
 			}
@@ -227,6 +233,20 @@ lista obtener_restricciones_dependientes(lista *restricciones,char var){
 	}
 	//printR(&restric);
 	return restric;
+}
+
+//Invierte una restriccion
+restriccion invertir_restriccion(restriccion r){
+	restriccion aux;
+	int i;
+	aux.limite = (r.limite*(-1));
+	aux.comparador = '<';
+	for (i = 0; i < strlen(r.variables); i++)
+	{
+		aux.coeficientes[i] = (r.coeficientes[i]*(-1));
+		aux.variables[i] = r.variables[i];
+	}
+	return aux;
 }
 
 //Funcion de prueba 
@@ -275,59 +295,46 @@ void shell_sort(float *A, int n){
 Limites obtenerValoresLimites(lista *l,char var){
 	Limites lim;
 	restriccion r;
-	int i,j;
-	float *aux = (float*)malloc(sizeof(float));
+	int i,j,tam=0;
+	float *aux = malloc(Size(l) *sizeof * aux);
 	for (i = 0; i < Size(l); i++)
 	{
 		r = Element(l,i+1);
 		for (j = 0; j < strlen(r.variables); j++)
 		{
 			if(r.variables[j] == var){
-				aux[i] = (r.limite/r.coeficientes[j]);
+				aux[tam++] = (r.limite/r.coeficientes[j]);
 				}
 		}
 	}
-
-	//for (i = 0; i < sizeof(aux)/sizeof(*aux) ;i++)
-		//printf("%f\n",aux[i]);
-	
-
 	//qsort(aux,sizeof(aux)/sizeof(*aux)+1,sizeof(float),comp);
-	shell_sort(aux,sizeof(aux)/sizeof(*aux));
-
-	//printf("\n");
-
-	//for (i = 0; i < sizeof(aux)/sizeof(*aux) ;i++)
-	//{
-	//	printf("%f\n",aux[i]);
-	//}
-
+	shell_sort(aux,tam);
 	lim.inferior = 0;
-	lim.superior = aux[(sizeof(aux)/sizeof(*aux))-1];
+	lim.superior = aux[tam-1];
 	lim.variable = var;
 
 	return lim;
 }
 
-Limites* obtener_limites_variables(lista *restricciones){
+Limites* obtener_limites_variables(lista *restricciones, Z fo){
 	
 	lista res;
 	int i,j,s=0;
 	restriccion r;
-	Limites * aux = (Limites*)malloc(sizeof(Limites));
+	Limites * aux = (Limites*)malloc(sizeof(Limites)*strlen(fo.variables));
 	Initialize(&res);
-	for (int i = 0; i < Size(restricciones); ++i)
+	for (i = 0; i < Size(restricciones); i++)
 	{
 		r = Element(restricciones,i+1);
-		for (j = 0; j <strlen(r.variables);j++)
+		for (j = 0; j <strlen(fo.variables);j++)
 		{
-			res = obtener_restricciones_dependientes(restricciones,r.variables[j]);
-			aux[i] = obtenerValoresLimites(&res,r.variables[j]);
+			res = obtener_restricciones_dependientes(restricciones,fo.variables[j]);
+			aux[s++] = obtenerValoresLimites(&res,r.variables[j]);
 		}
 	}
 
 	printf("Limite de las variables:\n\n");
-	for (int i = 0; i < Size(restricciones); ++i)
+	for (i = 0; i < s/4;i++)
 	{
 		printf("Varible: %c\n",aux[i].variable);
 		printf("Limite superior: %f\n",aux[i].superior);

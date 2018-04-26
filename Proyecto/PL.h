@@ -41,10 +41,11 @@ lista obtener_restricciones ();
 restriccion cuerpo_restriccion (char numero_restriccion);
 Condiciones_AG obtener_condiciones_iniciales ();
 void imprimir_problema_inicial (Z objetivo, lista * restricciones);
+restriccion invertir_restriccion(restriccion r);
 
 lista obtener_restricciones_dependientes(lista *restricciones,char var);
 Limites obtenerValoresLimites(lista *restricciones,char var);
-Limites* obtener_limites_variables(lista *restricciones);
+Limites* obtener_limites_variables(lista *restricciones, Z fo);
 
 void printR(lista* restricciones);
 void shell_sort(float *A, int n);
