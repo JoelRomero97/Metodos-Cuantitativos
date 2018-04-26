@@ -102,7 +102,8 @@ lista obtener_restricciones ()
 	{
 		//Se obtienen los coeficientes y las variables de la restricción i-ésima
 		res = cuerpo_restriccion (i + 1);
-		//Se almacena esa restricción en una lista de restricciones
+		if (res.comparador == '>')
+			res = invertir_restriccion (res);
 		Add (&restricciones, res);
 		printf ("\n¿Deseas ingresar otra restricción?\t\t1.Si\t\t0.No\t\t");
 		scanf ("%hhd", &otra);
@@ -241,6 +242,8 @@ Limites * obtener_limites_variables (lista * restricciones)
 restriccion invertir_restriccion (restriccion r)
 {
 	restriccion aux;
+	(aux.variables) = (char * ) malloc (sizeof (char) * strlen (r.variables));
+	(aux.coeficientes) = (float * ) malloc (sizeof (float) * strlen (r.variables));
 	int i;
 	aux.limite = (r.limite * (-1));
 	aux.comparador = '<';
