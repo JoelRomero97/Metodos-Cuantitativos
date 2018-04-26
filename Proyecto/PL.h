@@ -28,11 +28,19 @@ typedef struct Z
 }Z;
 
 //Estructura para almacenar los limites de las variables
-typedef struct limites{
+typedef struct limites
+{
 	float inferior;						//Almacena el limite inferior
 	float superior;						//Almacena el limite superior
 	char variable;						//Almacena la variable asociada a los limites
 }Limites;
+
+//Estructura para almacenar los valores binario y decimal de cada integrante de la población
+typedef struct integrante
+{
+	char * binario;
+	int decimal;
+}integrante;
 
 Z obtener_funcion_objetivo ();
 int criterio_funcion_objetivo ();
@@ -43,10 +51,19 @@ Condiciones_AG obtener_condiciones_iniciales ();
 void imprimir_problema_inicial (Z objetivo, lista * restricciones);
 restriccion invertir_restriccion(restriccion r);
 
+<<<<<<< HEAD
 lista obtener_restricciones_dependientes(lista *restricciones,char var);
 Limites obtenerValoresLimites(lista *restricciones,char var);
 Limites* obtener_limites_variables(lista *restricciones, Z fo);
+=======
+lista obtener_restricciones_dependientes (lista * restricciones, char variable);
+Limites obtener_valores_limites (lista * restricciones, char variable);
+Limites* obtener_limites_variables (lista * restricciones);
+>>>>>>> d5cfe0b71bbdb14fbcd986b177eaad944b7ddbf5
 
-void printR(lista* restricciones);
-void shell_sort(float *A, int n);
-int comp(const void * a, const void * b);
+void printR (lista * restricciones);
+void shell_sort (float *A, int n);
+int comp (const void * a, const void * b);
+char * cruzar_vectores (char * vector1, char * vector2);
+char * mutar_vector (char * vector);
+integrante * obtener_primera_poblacion (Limites variables, Condiciones_AG condiciones);
