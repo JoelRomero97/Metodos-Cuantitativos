@@ -111,7 +111,6 @@ lista obtener_restricciones ()
 	return restricciones;
 }
 
-
 restriccion cuerpo_restriccion (char numero_restriccion)
 {
 	restriccion res;
@@ -216,33 +215,15 @@ Limites * obtener_limites_variables (lista * restricciones)
 	lista res;
 	int i, j;
 	restriccion r;
-<<<<<<< HEAD
-	restriccion aux;
-	int i,j;
-	int tam=0;
-	Initialize(&restric);
-	for (i = 0; i < Size(restricciones) ; i++)
-=======
 	Limites * aux = (Limites*) malloc (sizeof (Limites));
 	Initialize (&res);
 	for (i = 0; i < Size (restricciones); i ++)
->>>>>>> d5cfe0b71bbdb14fbcd986b177eaad944b7ddbf5
 	{
 		r = Element (restricciones, i + 1);
 		for (j = 0; j < strlen (r.variables); j++)
 		{
-<<<<<<< HEAD
-			/*if(r.comparador == '>'){
-				aux = invertir_restriccion(r);
-				Add(&restric,aux);
-			}*/
-			if(r.variables[j] == var){
-				Add(&restric,r);
-			}
-=======
 			res = obtener_restricciones_dependientes (restricciones, r.variables [j]);
 			aux [i] = obtener_valores_limites (&res, r.variables [j]);
->>>>>>> d5cfe0b71bbdb14fbcd986b177eaad944b7ddbf5
 		}
 	}
 	printf ("Limite de las variables:\n\n");
@@ -256,9 +237,9 @@ Limites * obtener_limites_variables (lista * restricciones)
 	return aux;
 }
 
-<<<<<<< HEAD
 //Invierte una restriccion
-restriccion invertir_restriccion(restriccion r){
+restriccion invertir_restriccion(restriccion r)
+{
 	restriccion aux;
 	int i;
 	aux.limite = (r.limite*(-1));
@@ -271,14 +252,9 @@ restriccion invertir_restriccion(restriccion r){
 	return aux;
 }
 
-//Funcion de prueba 
-void printR(lista* restricciones){
-	int i,j;
-=======
 lista obtener_restricciones_dependientes (lista * restricciones, char variable)
 {
 	lista variables;
->>>>>>> d5cfe0b71bbdb14fbcd986b177eaad944b7ddbf5
 	restriccion r;
 	int i, j;
 	Initialize (&variables);
@@ -347,35 +323,23 @@ Limites obtener_valores_limites (lista *l, char var)
 {
 	Limites lim;
 	restriccion r;
-<<<<<<< HEAD
-	int i,j,tam=0;
-	float *aux = malloc(Size(l) *sizeof * aux);
-	for (i = 0; i < Size(l); i++)
-=======
 	int i, j, tam = 0;
 	float *aux = (float*) malloc (sizeof (float));
 	for (i = 0; i < Size (l); i ++)
->>>>>>> d5cfe0b71bbdb14fbcd986b177eaad944b7ddbf5
 	{
 		r = Element (l, i + 1);
 		for (j = 0; j < strlen (r.variables); j ++)
 		{
-<<<<<<< HEAD
-			if(r.variables[j] == var){
-				aux[tam++] = (r.limite/r.coeficientes[j]);
-				}
-=======
 			if (r.variables [j] == var)
 				aux [tam ++] = (r.limite / (r.coeficientes [j]));
->>>>>>> d5cfe0b71bbdb14fbcd986b177eaad944b7ddbf5
 		}
 	}
+
+	//for (i = 0; i < sizeof(aux)/sizeof(*aux) ;i++)
+		//printf("%f\n",aux[i]);
+	
+
 	//qsort(aux,sizeof(aux)/sizeof(*aux)+1,sizeof(float),comp);
-<<<<<<< HEAD
-	shell_sort(aux,tam);
-	lim.inferior = 0;
-	lim.superior = aux[tam-1];
-=======
 	shell_sort (aux, tam);
 
 	//printf("\n");
@@ -387,40 +351,11 @@ Limites obtener_valores_limites (lista *l, char var)
 
 	lim.inferior = (aux [0]);
 	lim.superior = (aux [tam - 1]);
->>>>>>> d5cfe0b71bbdb14fbcd986b177eaad944b7ddbf5
 	lim.variable = var;
 
 	return lim;
 }
 
-<<<<<<< HEAD
-Limites* obtener_limites_variables(lista *restricciones, Z fo){
-	
-	lista res;
-	int i,j,s=0;
-	restriccion r;
-	Limites * aux = (Limites*)malloc(sizeof(Limites)*strlen(fo.variables));
-	Initialize(&res);
-	for (i = 0; i < Size(restricciones); i++)
-	{
-		r = Element(restricciones,i+1);
-		for (j = 0; j <strlen(fo.variables);j++)
-		{
-			res = obtener_restricciones_dependientes(restricciones,fo.variables[j]);
-			aux[s++] = obtenerValoresLimites(&res,r.variables[j]);
-		}
-	}
-
-	printf("Limite de las variables:\n\n");
-	for (i = 0; i < s/4;i++)
-	{
-		printf("Varible: %c\n",aux[i].variable);
-		printf("Limite superior: %f\n",aux[i].superior);
-		printf("Limite inferior: %f\n",aux[i].inferior);
-		printf("\n");
-	}
-	return aux;
-=======
 char * cruzar_vectores (char * vector1, char * vector2)
 {
 	int i, cromosomas_vector1;
@@ -457,10 +392,10 @@ char * mutar_vector (char * vector)
 	return vector;
 }
 
+/*
 integrante * obtener_primera_poblacion (Limites variables, Condiciones_AG condiciones)
 {
 	int i, num_bits;
 	integrante * poblacion = (integrante *) malloc (sizeof (integrante));
 	for (i = 0; i < )
->>>>>>> d5cfe0b71bbdb14fbcd986b177eaad944b7ddbf5
-}
+}*/

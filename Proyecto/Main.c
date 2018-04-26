@@ -26,11 +26,7 @@ int main(int argc, char const *argv[])
 	funcion_objetivo = obtener_funcion_objetivo ();								//Obtener la función objetivo del problema
 	restricciones = obtener_restricciones ();									//Obtener las restricciones del problema
 	imprimir_problema_inicial (funcion_objetivo, &restricciones);
-<<<<<<< HEAD
-	lim = obtener_limites_variables(&restricciones,funcion_objetivo);
-=======
 	lim = obtener_limites_variables(&restricciones);
-	poblacion = obtener_primera_poblacion (lim, geneticos);
->>>>>>> d5cfe0b71bbdb14fbcd986b177eaad944b7ddbf5
+	//poblacion = obtener_primera_poblacion (lim, geneticos);
 	return 0;
 }
