@@ -3,14 +3,6 @@
 #include <string.h>
 #include "PL.h"
 
-/*
-Compilar y ejecutar:
-					1. gcc Lista.c -o Lista.o -c
-					2. gcc PL.c -o PL.o -c
-					3. gcc Main.c -o Main PL.o Lista.o
-					4. ./Main
-*/
-
 int main(int argc, char const *argv[])
 {
 
