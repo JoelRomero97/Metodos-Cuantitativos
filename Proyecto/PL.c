@@ -392,10 +392,49 @@ char * mutar_vector (char * vector)
 	return vector;
 }
 
-/*
-integrante * obtener_primera_poblacion (Limites variables, Condiciones_AG condiciones)
+int binario_to_decimal (char * binario)
 {
-	int i, num_bits;
-	integrante * poblacion = (integrante *) malloc (sizeof (integrante));
-	for (i = 0; i < )
-}*/
+	int i, numero = 0, flag = 0;
+	char * pt = binario;
+	char * ptr = binario;
+	for (; * pt != '\0'; pt ++); pt--;
+	for (; pt >= ptr; pt--, flag ++)
+		if (* pt == '1')
+			numero += pow (2, flag);
+	return numero;
+}
+
+integrante ** matriz_poblacion (int filas, int columnas)
+{
+	int i;
+	integrante ** matriz = (integrante **) malloc (sizeof (integrante *) * filas);
+	for (i = 0; i < filas; i ++)
+		matriz [i] = (integrante *) malloc (sizeof (integrante) * columnas);
+	return matriz;
+}
+
+integrante ** obtener_primera_poblacion (Z funcion_objetivo, Limites * variables, Condiciones_AG condiciones)
+{
+	int i, j, k, num_bits, columnas, filas, superior, inferior, aux;
+	filas = (condiciones.integrantes);
+	columnas = strlen (funcion_objetivo.variables);
+	//Población de integrantes (filas) para cada variable (columnas)
+	integrante ** poblacion = matriz_poblacion (filas, columnas);
+	//Se calcula el número de bits de cada integrante de la población
+	srand (time (NULL));
+	for (i = 0; i < filas; i ++)
+	{
+		for (j = 0; j < columnas; j ++)
+		{
+			superior = round ((variables [j]).superior);
+			inferior = round ((variables [j]).inferior);
+			aux = ((superior - inferior) * (pow (10, condiciones.bits_precision)));
+			num_bits = ceil ((log10 (aux)) / (log10 (2)));
+			((poblacion [i][j]).binario) = (char *) malloc (sizeof (char) * num_bits);
+			for (k = 0; k < num_bits; k ++)
+				((poblacion [i][j]).binario [k]) = (rand () % 2);
+			((poblacion [i][j]).decimal) = binario_to_decimal ((poblacion [i][j]).binario);
+		}
+	}
+	return poblacion;
+}

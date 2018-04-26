@@ -58,4 +58,5 @@ void shell_sort (float * numeros, int n);
 Limites obtener_valores_limites (lista *l, char var);
 char * cruzar_vectores (char * vector1, char * vector2);
 char * mutar_vector (char * vector);
-integrante * obtener_primera_poblacion (Limites variables, Condiciones_AG condiciones);
+int binario_to_decimal (char * binario);
+integrante ** obtener_primera_poblacion (Z funcion_objetivo, Limites * variables, Condiciones_AG condiciones);
