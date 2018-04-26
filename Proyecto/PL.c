@@ -212,7 +212,6 @@ void imprimir_problema_inicial (Z objetivo, lista * restricciones)
 
 Limites * obtener_limites_variables (lista * restricciones)
 {
-	
 	lista res;
 	int i, j;
 	restriccion r;
@@ -305,7 +304,7 @@ void shell_sort (float * numeros, int n)
 }
 
 /*Obtiene los valores de los limites de una variable*/
-Limites obtener_valores_limites (lista *l,char var)
+Limites obtener_valores_limites (lista *l, char var)
 {
 	Limites lim;
 	restriccion r;
@@ -376,4 +375,11 @@ char * mutar_vector (char * vector)
 	else
 		printf ("\n\nError al mutar el vector '%s'\n\n", vector);
 	return vector;
+}
+
+integrante * obtener_primera_poblacion (Limites variables, Condiciones_AG condiciones)
+{
+	int i, num_bits;
+	integrante * poblacion = (integrante *) malloc (sizeof (integrante));
+	for (i = 0; i < )
 }

@@ -35,6 +35,13 @@ typedef struct limites
 	char variable;						//Almacena la variable asociada a los limites
 }Limites;
 
+//Estructura para almacenar los valores binario y decimal de cada integrante de la población
+typedef struct integrante
+{
+	char * binario;
+	int decimal;
+}integrante;
+
 Z obtener_funcion_objetivo ();
 int criterio_funcion_objetivo ();
 Z cuerpo_funcion_objetivo (Z objetivo);
@@ -52,3 +59,4 @@ void shell_sort (float *A, int n);
 int comp (const void * a, const void * b);
 char * cruzar_vectores (char * vector1, char * vector2);
 char * mutar_vector (char * vector);
+integrante * obtener_primera_poblacion (Limites variables, Condiciones_AG condiciones);
