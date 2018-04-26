@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <math.h>
 #include "PL.h"
 
@@ -339,4 +340,40 @@ Limites obtener_valores_limites (lista *l,char var)
 	lim.variable = var;
 
 	return lim;
+}
+
+char * cruzar_vectores (char * vector1, char * vector2)
+{
+	int i, cromosomas_vector1;
+	int tam = strlen (vector1);
+	char * vector_resultado = (char *) malloc (sizeof (char) * tam);
+	srand (time (NULL));
+	//Se obtiene aleatoriamente el número de bits del vector 1
+	cromosomas_vector1 = (rand () % tam);
+	//Se copian los n bits del vector 1 al resultado
+	for (i = 0; i < cromosomas_vector1; i ++)
+		vector_resultado [i] = vector1 [i];
+	//Se copian los bits restantes del vector 2 al resultado
+	for (; i < tam; i ++)
+		vector_resultado [i] = vector2 [i];
+	vector_resultado [i] = '\0';
+	return vector_resultado;
+}
+
+char * mutar_vector (char * vector)
+{
+	//Se obtiene el número de cromosomas del vector
+	int tam = strlen (vector);
+	int bit;
+	srand (time (NULL));
+	//Se genera aleatoriamente el bit en el que se realizará la mutación
+	bit = (rand () % tam);
+	//Se cambia el cromosoma por 0 o 1 según corresponda
+	if (vector [bit] == '0')
+		vector [bit] = '1';
+	else if (vector [bit] == '1')
+		vector [bit] = '0';
+	else
+		printf ("\n\nError al mutar el vector '%s'\n\n", vector);
+	return vector;
 }

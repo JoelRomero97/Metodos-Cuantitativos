@@ -50,3 +50,5 @@ Limites* obtener_limites_variables (lista * restricciones);
 void printR (lista * restricciones);
 void shell_sort (float *A, int n);
 int comp (const void * a, const void * b);
+char * cruzar_vectores (char * vector1, char * vector2);
+char * mutar_vector (char * vector);
