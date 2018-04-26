@@ -238,16 +238,16 @@ Limites * obtener_limites_variables (lista * restricciones)
 }
 
 //Invierte una restriccion
-restriccion invertir_restriccion(restriccion r)
+restriccion invertir_restriccion (restriccion r)
 {
 	restriccion aux;
 	int i;
-	aux.limite = (r.limite*(-1));
+	aux.limite = (r.limite * (-1));
 	aux.comparador = '<';
-	for (i = 0; i < strlen(r.variables); i++)
+	for (i = 0; i < strlen (r.variables); i ++)
 	{
-		aux.coeficientes[i] = (r.coeficientes[i]*(-1));
-		aux.variables[i] = r.variables[i];
+		(aux.coeficientes [i]) = ((r.coeficientes [i]) * (-1));
+		(aux.variables [i]) = (r.variables [i]);
 	}
 	return aux;
 }

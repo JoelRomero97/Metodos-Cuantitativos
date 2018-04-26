@@ -50,7 +50,7 @@ lista obtener_restricciones ();
 restriccion cuerpo_restriccion (char numero_restriccion);
 void imprimir_problema_inicial (Z objetivo, lista * restricciones);
 Limites * obtener_limites_variables (lista * restricciones);
-restriccion invertir_restriccion(restriccion r);
+restriccion invertir_restriccion (restriccion r);
 lista obtener_restricciones_dependientes (lista * restricciones, char variable);
 void printR (lista * restricciones);
 int comp (const void * a, const void * b);
