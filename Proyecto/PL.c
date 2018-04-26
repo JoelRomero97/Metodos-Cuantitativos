@@ -104,6 +104,7 @@ lista obtener_restricciones ()
 		res = cuerpo_restriccion (i + 1);
 		if (res.comparador == '>')
 			res = invertir_restriccion (res);
+		//Se almacena esa restricción en una lista de restricciones
 		Add (&restricciones, res);
 		printf ("\n¿Deseas ingresar otra restricción?\t\t1.Si\t\t0.No\t\t");
 		scanf ("%hhd", &otra);
@@ -242,9 +243,9 @@ Limites * obtener_limites_variables (lista * restricciones)
 restriccion invertir_restriccion (restriccion r)
 {
 	restriccion aux;
-	(aux.variables) = (char * ) malloc (sizeof (char) * strlen (r.variables));
-	(aux.coeficientes) = (float * ) malloc (sizeof (float) * strlen (r.variables));
 	int i;
+	aux.coeficientes = (float *) malloc (sizeof (float) * (strlen (r.variables)));
+	aux.variables = (char *) malloc (sizeof (char) * (strlen (r.variables)));
 	aux.limite = (r.limite * (-1));
 	aux.comparador = '<';
 	for (i = 0; i < strlen (r.variables); i ++)
@@ -252,6 +253,7 @@ restriccion invertir_restriccion (restriccion r)
 		(aux.coeficientes [i]) = ((r.coeficientes [i]) * (-1));
 		(aux.variables [i]) = (r.variables [i]);
 	}
+	(aux.variables [i]) = '\0';
 	return aux;
 }
 
