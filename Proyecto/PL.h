@@ -60,3 +60,4 @@ char * cruzar_vectores (char * vector1, char * vector2);
 char * mutar_vector (char * vector);
 int binario_to_decimal (char * binario);
 integrante ** obtener_primera_poblacion (Z funcion_objetivo, Limites * variables, Condiciones_AG condiciones);
+void print_poblacion (integrante ** poblacion, int filas, int columnas);

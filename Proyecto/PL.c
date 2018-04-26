@@ -397,27 +397,6 @@ char * mutar_vector (char * vector)
 	return vector;
 }
 
-int binario_to_decimal (char * binario)
-{
-	int i, numero = 0, flag = 0;
-	char * pt = binario;
-	char * ptr = binario;
-	for (; * pt != '\0'; pt ++); pt--;
-	for (; pt >= ptr; pt--, flag ++)
-		if (* pt == '1')
-			numero += pow (2, flag);
-	return numero;
-}
-
-integrante ** matriz_poblacion (int filas, int columnas)
-{
-	int i;
-	integrante ** matriz = (integrante **) malloc (sizeof (integrante *) * filas);
-	for (i = 0; i < filas; i ++)
-		matriz [i] = (integrante *) malloc (sizeof (integrante) * columnas);
-	return matriz;
-}
-
 integrante ** obtener_primera_poblacion (Z funcion_objetivo, Limites * variables, Condiciones_AG condiciones)
 {
 	int i, j, k, num_bits, columnas, filas, superior, inferior, aux;
@@ -441,5 +420,42 @@ integrante ** obtener_primera_poblacion (Z funcion_objetivo, Limites * variables
 			((poblacion [i][j]).decimal) = binario_to_decimal ((poblacion [i][j]).binario);
 		}
 	}
+	print_poblacion (poblacion, filas, columnas);
 	return poblacion;
+}
+
+void print_poblacion (integrante ** poblacion, int filas, int columnas)
+{
+	int i, j, k;
+	for (i = 0; i < filas; i ++)
+	{
+		for (j = 0; j < columnas; j ++)
+		{
+			for (k = 0; k < strlen (poblacion [i][j].binario); k ++)
+				printf ("%c", ((poblacion [i][j]).binario [k]));
+			printf ("\t");
+		}
+		printf ("\n");
+	}
+}
+
+integrante ** matriz_poblacion (int filas, int columnas)
+{
+	int i;
+	integrante ** matriz = (integrante **) malloc (sizeof (integrante *) * filas);
+	for (i = 0; i < filas; i ++)
+		matriz [i] = (integrante *) malloc (sizeof (integrante) * columnas);
+	return matriz;
+}
+
+int binario_to_decimal (char * binario)
+{
+	int i, numero = 0, flag = 0;
+	char * pt = binario;
+	char * ptr = binario;
+	for (; * pt != '\0'; pt ++); pt--;
+	for (; pt >= ptr; pt--, flag ++)
+		if (* pt == '1')
+			numero += pow (2, flag);
+	return numero;
 }
