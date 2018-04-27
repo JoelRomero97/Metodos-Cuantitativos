@@ -402,7 +402,13 @@ integrante ** obtener_primera_poblacion (Z funcion_objetivo, Limites * variables
 			num_bits = ceil ((log10 (aux)) / (log10 (2)));
 			((poblacion [i][j]).binario) = (char *) malloc (sizeof (char) * num_bits);
 			for (k = 0; k < num_bits; k ++)
-				((poblacion [i][j]).binario [k]) = (rand () % 2);
+			{
+				if ((rand () % 2))
+					((poblacion [i][j]).binario [k]) = '1';
+				else
+					((poblacion [i][j]).binario [k]) = '0';
+			}
+			((poblacion [i][j]).binario [k]) = '\0';
 			((poblacion [i][j]).decimal) = binario_to_decimal ((poblacion [i][j]).binario);
 		}
 	}
@@ -413,7 +419,7 @@ integrante ** obtener_primera_poblacion (Z funcion_objetivo, Limites * variables
 void print_poblacion (integrante ** poblacion, int filas, int columnas)
 {
 	int i, j, k;
-	printf ("\n\nPOBLACIÓN\n\n");
+	printf ("\n\nPOBLACIÓN BINARIO\n\n");
 	for (i = 0; i < filas; i ++)
 	{
 		for (j = 0; j < columnas; j ++)
@@ -422,6 +428,13 @@ void print_poblacion (integrante ** poblacion, int filas, int columnas)
 				printf ("%c", ((poblacion [i][j]).binario [k]));
 			printf ("\t");
 		}
+		printf ("\n");
+	}
+	printf ("\n\nPOBLACIÓN DECIMAL\n\n");
+	for (i = 0; i < filas; i ++)
+	{
+		for (j = 0; j < columnas; j ++)
+			printf ("%d\t", ((poblacion [i][j]).decimal));
 		printf ("\n");
 	}
 }
