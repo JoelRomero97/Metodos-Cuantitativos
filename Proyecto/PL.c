@@ -221,25 +221,28 @@ void imprimir_problema_inicial (Z objetivo, lista * restricciones)
 		printf ("\n\nNo existen restricciones\n\n");
 	return;
 }
-
-Limites * obtener_limites_variables (lista * restricciones)
+/*Funcion: obtener_limites_variables
+Recibe: Lista de restricciones, funcion obejetivo
+Retorna: Array con los limites de cada variable*/
+Limites * obtener_limites_variables (lista * restricciones, Z FO)
 {
 	lista res;
-	int i, j;
+	int i, j,s=0;
 	restriccion r;
 	Limites * aux = (Limites*) malloc (sizeof (Limites));
 	Initialize (&res);
-	for (i = 0; i < Size (restricciones); i ++)
+	for (i = 0; i < strlen(FO.variables); i ++)
 	{
-		r = Element (restricciones, i + 1);
-		for (j = 0; j < strlen (r.variables); j++)
-		{
-			res = obtener_restricciones_dependientes (restricciones, r.variables [j]);
-			aux [i] = obtener_valores_limites (&res, r.variables [j]);
-		}
+		res = obtener_restricciones_dependientes(restricciones,FO.variables[i]);
+		aux[s++]= obtener_valores_limites(&res,FO.variables[i]);
 	}
+<<<<<<< HEAD
 	/*printf ("Limite de las variables:\n\n");
 	for (i = 0; i < Size (restricciones); i ++)
+=======
+	printf ("\n\nLimite de las variables:\n\n");
+	for (i = 0; i < s; i ++)
+>>>>>>> 3299a6989b7274e2b105c32a795c89f81bd6a10b
 	{
 		printf("Varible: %c\n", ((aux [i]).variable));
 		printf("Limite superior: %f\n", ((aux [i]).superior));
@@ -249,7 +252,9 @@ Limites * obtener_limites_variables (lista * restricciones)
 	return aux;
 }
 
-//Invierte una restriccion
+/*Funcion:invertir_restriccion
+Recibe: restriccion r
+Retorna: restriccion r invertida*/
 restriccion invertir_restriccion (restriccion r)
 {
 	restriccion aux;
@@ -267,6 +272,9 @@ restriccion invertir_restriccion (restriccion r)
 	return aux;
 }
 
+/*Funcion:obtener_restricciones_dependientes
+Recibe: lista de restricciones, variable 
+Retorna: lista con las restricciones donde aparece variable*/
 lista obtener_restricciones_dependientes (lista * restricciones, char variable)
 {
 	lista variables;
@@ -299,18 +307,7 @@ void printR (lista * restricciones)
 	}
 }
 
-/*Funcion comparadora general, para usar en qsort*/
-int comp (const void * a, const void * b)
-{
-	if ((*(float*) a) < (*(float*) b))
-		return -1;
-	else if ((*(float*) a) == (*(float*) b))
-		return 0;
-	else if ((*(float*) a) > (*(float*) b))
-		return 1;
-}
-
-
+//Algortimo de ordenamiento shell
 void shell_sort (float * numeros, int n)
 {
 	int i, j, k = n / 2;
@@ -333,7 +330,9 @@ void shell_sort (float * numeros, int n)
 	return;
 }
 
-/*Obtiene los valores de los limites de una variable*/
+/*Funcion: obtener_valores_limites
+Recibe: lista de restricciones dependientes l, variable 
+Retorna: Los limites superior e inferior de la variable 'var'*/
 Limites obtener_valores_limites (lista *l, char var)
 {
 	Limites lim;
@@ -349,22 +348,8 @@ Limites obtener_valores_limites (lista *l, char var)
 				aux [tam ++] = (r.limite / (r.coeficientes [j]));
 		}
 	}
-
-	//for (i = 0; i < sizeof(aux)/sizeof(*aux) ;i++)
-		//printf("%f\n",aux[i]);
-	
-
-	//qsort(aux,sizeof(aux)/sizeof(*aux)+1,sizeof(float),comp);
 	shell_sort (aux, tam);
-
-	//printf("\n");
-
-	//for (i = 0; i < sizeof(aux)/sizeof(*aux) ;i++)
-	//{
-	//	printf("%f\n",aux[i]);
-	//}
-
-	lim.inferior = (aux [0]);
+	lim.inferior = 0;
 	lim.superior = (aux [tam - 1]);
 	lim.variable = var;
 	free (aux);
