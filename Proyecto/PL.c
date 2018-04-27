@@ -479,3 +479,15 @@ int binario_to_decimal (char * binario)
 			numero += pow (2, flag);
 	return numero;
 }
+
+float evaluar_funcion_objetivo (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG condiciones, int integrante)
+{
+	int i, j, columnas;
+	float resultado = 0;
+	columnas = strlen (funcion_objetivo.variables);
+	for (j = 0; j < columnas; j ++)
+	{
+		resultado += (funcion_objetivo.coeficientes [j] * ((poblacion [integrante][j]).momentum));
+	}
+	return resultado;
+}
