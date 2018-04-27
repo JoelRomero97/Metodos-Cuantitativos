@@ -4,3 +4,4 @@ gcc Main.c -o Main PL.o Lista.o -lm
 rm Lista.o
 rm PL.o
 ./Main
+rm Main
