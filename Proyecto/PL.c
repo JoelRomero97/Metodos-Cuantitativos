@@ -236,8 +236,6 @@ Limites * obtener_limites_variables (lista * restricciones, Z FO)
 		res = obtener_restricciones_dependientes(restricciones,FO.variables[i]);
 		aux[s++]= obtener_valores_limites(&res,FO.variables[i]);
 	}
-	/*printf ("Limite de las variables:\n\n");
-	for (i = 0; i < Size (restricciones); i ++)
 	printf ("\n\nLimite de las variables:\n\n");
 	for (i = 0; i < s; i ++)
 	{
@@ -245,7 +243,7 @@ Limites * obtener_limites_variables (lista * restricciones, Z FO)
 		printf("Limite superior: %f\n", ((aux [i]).superior));
 		printf("Limite inferior: %f\n", ((aux [i]).inferior));
 		printf("\n");
-	}*/
+	}
 	return aux;
 }
 
