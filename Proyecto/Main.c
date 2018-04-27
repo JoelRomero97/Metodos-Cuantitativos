@@ -19,7 +19,7 @@ int main(int argc, char const *argv[])
 	restricciones = obtener_restricciones ();									//Obtener las restricciones del problema
 	//imprimir_condiciones_iniciales (geneticos);
 	//imprimir_problema_inicial (funcion_objetivo, &restricciones);
-	lim = obtener_limites_variables(&restricciones);
+	lim = obtener_limites_variables(&restricciones, funcion_objetivo);
 	poblacion = obtener_primera_poblacion (funcion_objetivo, lim, geneticos);
 	return 0;
 }
