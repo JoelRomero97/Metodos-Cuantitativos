@@ -5,7 +5,6 @@
 
 int main(int argc, char const *argv[])
 {
-
 	Limites * lim;
 	integrante ** poblacion;
 	char i;																		//Auxiliar utilizado como contador
