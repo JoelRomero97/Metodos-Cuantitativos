@@ -410,6 +410,19 @@ integrante ** obtener_primera_poblacion (Z funcion_objetivo, Limites * variables
 			}
 			((poblacion [i][j]).binario [k]) = '\0';
 			((poblacion [i][j]).decimal) = binario_to_decimal ((poblacion [i][j]).binario);
+			/*while (((poblacion [i][j]).decimal) > superior)
+			{
+				for (k = 0; k < num_bits; k ++)
+				{
+					if ((rand () % 2))
+						((poblacion [i][j]).binario [k]) = '1';
+					else
+						((poblacion [i][j]).binario [k]) = '0';
+				}
+				((poblacion [i][j]).binario [k]) = '\0';
+				((poblacion [i][j]).decimal) = binario_to_decimal ((poblacion [i][j]).binario);
+			}*/
+			((poblacion [i][j]).momentum) = (inferior + (((poblacion [i][j]).decimal) * ((superior - inferior) / (pow (2, num_bits) - 1))));
 		}
 	}
 	print_poblacion (poblacion, filas, columnas);
@@ -435,6 +448,13 @@ void print_poblacion (integrante ** poblacion, int filas, int columnas)
 	{
 		for (j = 0; j < columnas; j ++)
 			printf ("%d\t", ((poblacion [i][j]).decimal));
+		printf ("\n");
+	}
+	printf ("\n\nPOBLACIÓN MOMENTUM\n\n");
+	for (i = 0; i < filas; i ++)
+	{
+		for (j = 0; j < columnas; j ++)
+			printf ("%f\t", ((poblacion [i][j]).momentum));
 		printf ("\n");
 	}
 }

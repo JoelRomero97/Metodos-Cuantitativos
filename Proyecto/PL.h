@@ -40,6 +40,7 @@ typedef struct integrante
 {
 	char * binario;
 	int decimal;
+	float momentum;
 }integrante;
 
 Condiciones_AG obtener_condiciones_iniciales ();
