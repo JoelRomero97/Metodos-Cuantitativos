@@ -12,11 +12,11 @@
 //Estructura para almacenar algunas condiciones iniciales del problema
 typedef struct Condiciones_AG
 {
-	char tiempo_maximo;					//Almacena el tiempo máximo de resolución (minutos)
+	short tiempo_maximo;				//Almacena el tiempo máximo de resolución (minutos)
 	float error_maximo;					//Almacena el error máximo permitido (porcentaje)
-	int it_max;							//Almacena el número de iteraciones máximas del problema
-	char bits_precision;				//Almacena el número de bits de precisión
-	char integrantes;					//Almacena el número de integrantes de la población
+	short it_max;						//Almacena el número de iteraciones máximas del problema
+	short bits_precision;				//Almacena el número de bits de precisión
+	short integrantes;					//Almacena el número de integrantes de la población
 }Condiciones_AG;
 
 //Estructura para almacenar la Función Objetivo
@@ -43,6 +43,7 @@ typedef struct integrante
 }integrante;
 
 Condiciones_AG obtener_condiciones_iniciales ();
+void imprimir_condiciones_iniciales (Condiciones_AG condiciones);
 Z obtener_funcion_objetivo ();
 int criterio_funcion_objetivo ();
 Z cuerpo_funcion_objetivo (Z objetivo);
@@ -58,6 +59,7 @@ void shell_sort (float * numeros, int n);
 Limites obtener_valores_limites (lista *l, char var);
 char * cruzar_vectores (char * vector1, char * vector2);
 char * mutar_vector (char * vector);
-int binario_to_decimal (char * binario);
 integrante ** obtener_primera_poblacion (Z funcion_objetivo, Limites * variables, Condiciones_AG condiciones);
+integrante ** matriz_poblacion (int filas, int columnas);
+int binario_to_decimal (char * binario);
 void print_poblacion (integrante ** poblacion, int filas, int columnas);

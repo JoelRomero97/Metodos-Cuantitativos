@@ -11,16 +11,26 @@ Condiciones_AG obtener_condiciones_iniciales ()
 	system (clear);
 	printf ("\n______________________________ALGORITMOS GENÉTICOS______________________________\n");
 	printf ("\n\nIngresa el tiempo máximo de procesamiento (minutos):\t");
-	scanf ("%hhd", &auxiliar.tiempo_maximo);
-	printf ("\n\nIngresa el error máximo permitido (porcentaje):\t");
+	scanf ("%hd", &auxiliar.tiempo_maximo);
+	printf ("\n\nIngresa el error máximo permitido (porcentaje):\t\t");
 	scanf ("%f", &auxiliar.error_maximo);
 	auxiliar.error_maximo = (auxiliar.error_maximo * 0.01);
-	printf ("\n\nIngresa el número máximo de iteraciones:\t");
-	scanf ("%d", &auxiliar.it_max);
+	printf ("\n\nIngresa el número máximo de iteraciones:\t\t");
+	scanf ("%hd", &auxiliar.it_max);
 	printf ("\n\nIngresa el número de bits de precisión deseados:\t");
-	scanf ("%hhd", &auxiliar.bits_precision);
-	printf ("\n\nIngresa el número de integrantes por población:\t");
-	scanf ("%hhd", &auxiliar.integrantes);
+	scanf ("%hd", &auxiliar.bits_precision);
+	printf ("\n\nIngresa el número de integrantes por población:\t\t");
+	scanf ("%hd", &auxiliar.integrantes);
+	return auxiliar;
+}
+
+void imprimir_condiciones_iniciales (Condiciones_AG condiciones)
+{
+	printf ("\n\nTiempo máximo: %d", condiciones.tiempo_maximo);
+	printf ("\nPorcentaje de error: %f", condiciones.error_maximo);
+	printf ("\nNúmero máximo de iteraciones: %d", condiciones.it_max);
+	printf ("\nNúmero de bits de precisión: %d", condiciones.bits_precision);
+	printf ("\nNúmero de integrantes por población: %d", condiciones.integrantes);
 }
 
 Z obtener_funcion_objetivo ()
@@ -228,14 +238,14 @@ Limites * obtener_limites_variables (lista * restricciones)
 			aux [i] = obtener_valores_limites (&res, r.variables [j]);
 		}
 	}
-	printf ("Limite de las variables:\n\n");
+	/*printf ("Limite de las variables:\n\n");
 	for (i = 0; i < Size (restricciones); i ++)
 	{
 		printf("Varible: %c\n", ((aux [i]).variable));
 		printf("Limite superior: %f\n", ((aux [i]).superior));
 		printf("Limite inferior: %f\n", ((aux [i]).inferior));
 		printf("\n");
-	}
+	}*/
 	return aux;
 }
 
@@ -357,7 +367,7 @@ Limites obtener_valores_limites (lista *l, char var)
 	lim.inferior = (aux [0]);
 	lim.superior = (aux [tam - 1]);
 	lim.variable = var;
-
+	free (aux);
 	return lim;
 }
 
@@ -365,18 +375,14 @@ char * cruzar_vectores (char * vector1, char * vector2)
 {
 	int i, cromosomas_vector1;
 	int tam = strlen (vector1);
-	char * vector_resultado = (char *) malloc (sizeof (char) * tam);
 	srand (time (NULL));
 	//Se obtiene aleatoriamente el número de bits del vector 1
 	cromosomas_vector1 = (rand () % tam);
-	//Se copian los n bits del vector 1 al resultado
-	for (i = 0; i < cromosomas_vector1; i ++)
-		vector_resultado [i] = vector1 [i];
 	//Se copian los bits restantes del vector 2 al resultado
-	for (; i < tam; i ++)
-		vector_resultado [i] = vector2 [i];
-	vector_resultado [i] = '\0';
-	return vector_resultado;
+	for (i = cromosomas_vector1; i < tam; i ++)
+		vector1 [i] = vector2 [i];
+	vector1 [i] = '\0';
+	return vector1;
 }
 
 char * mutar_vector (char * vector)
@@ -427,6 +433,7 @@ integrante ** obtener_primera_poblacion (Z funcion_objetivo, Limites * variables
 void print_poblacion (integrante ** poblacion, int filas, int columnas)
 {
 	int i, j, k;
+	printf ("\n\nPOBLACIÓN\n\n");
 	for (i = 0; i < filas; i ++)
 	{
 		for (j = 0; j < columnas; j ++)
