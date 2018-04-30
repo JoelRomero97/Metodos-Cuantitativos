@@ -64,3 +64,8 @@ integrante ** matriz_poblacion (int filas, int columnas);
 int binario_to_decimal (char * binario);
 void print_poblacion (integrante ** poblacion, int filas, int columnas);
 float evaluar_funcion_objetivo (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG condiciones, int integrante);
+
+
+void FireFly(integrante ** poblacion, Z funcion_objetivo, Condiciones_AG condiciones);
+float obtener_probabilidad(float sumaZ, float valorZ);
+int nuevo_integrante(float *aleat, float *pAcum, int integrante, Condiciones_AG geneticos);

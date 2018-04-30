@@ -20,11 +20,6 @@ int main(int argc, char const *argv[])
 	//imprimir_problema_inicial (funcion_objetivo, &restricciones);
 	lim = obtener_limites_variables(&restricciones, funcion_objetivo);
 	poblacion = obtener_primera_poblacion (funcion_objetivo, lim, geneticos);
-	for (i = 0; i < geneticos.integrantes; i ++)
-	{
-		float final = evaluar_funcion_objetivo (poblacion, funcion_objetivo, geneticos, i);
-		printf ("\n\nEvaluación para integrante %d: %f", (i + 1), final);
-	}
-	printf ("\n\n");
+	FireFly(poblacion,funcion_objetivo,geneticos);
 	return 0;
 }

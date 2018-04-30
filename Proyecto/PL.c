@@ -491,3 +491,44 @@ float evaluar_funcion_objetivo (integrante ** poblacion, Z funcion_objetivo, Con
 	}
 	return resultado;
 }
+
+//Asi se llama el algoritmo que usamos
+void FireFly(integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneticos){
+	int i;
+	float prob,sumaZ,pAcum,*final=malloc(sizeof(float)*geneticos.integrantes);
+	float *aleat = malloc(sizeof(float)*geneticos.integrantes);
+	float *pAcumE = malloc(sizeof(float)*geneticos.integrantes);;
+	srand(time(NULL));
+	for (i = 0; i < geneticos.integrantes; i ++)
+	{
+		final[i] = evaluar_funcion_objetivo (poblacion, funcion_objetivo, geneticos, i);
+		sumaZ += final[i];
+
+		printf ("\n\nEvaluación para integrante %d: %f", (i + 1), final[i]);
+	}
+	printf ("\n\n");
+	printf("VECTOR\t\tZ\t\tP(z)\t\tPacum\t\t#Alet\n"); 
+	for (i = 0; i < geneticos.integrantes; ++i)
+	{
+		aleat[i] = (rand() % 10000)/10000.0;
+		pAcumE[i] = pAcum += obtener_probabilidad(sumaZ,final[i]);
+		prob = obtener_probabilidad(sumaZ,final[i]);
+		printf("V%i\t%f\t%f\t%f\t%f\n",i+1,final[i],prob,pAcum,aleat[i]);
+	}
+}
+
+int nuevo_integrante(float *aleat, float *pAcum, int integrante, Condiciones_AG geneticos){
+	int i,j;
+	int pos=0;
+	float *aux = malloc(sizeof(float)*geneticos.integrantes);
+	for (i = 0; i < geneticos.integrantes ; i++)
+	{
+		aux[i] = aleat[integrante] - pAcum[i];
+		
+	}
+	return 0;
+}
+
+float obtener_probabilidad(float sumaZ, float valorZ){
+	return (valorZ/sumaZ);
+}
