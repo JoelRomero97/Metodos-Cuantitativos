@@ -41,6 +41,7 @@ typedef struct integrante
 	char * binario;
 	int decimal;
 	float momentum;
+	int apariciones;
 }integrante;
 
 Condiciones_AG obtener_condiciones_iniciales ();

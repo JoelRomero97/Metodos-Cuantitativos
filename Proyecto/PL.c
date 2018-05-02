@@ -486,35 +486,55 @@ float evaluar_funcion_objetivo (integrante ** poblacion, Z funcion_objetivo, Con
 	float resultado = 0;
 	columnas = strlen (funcion_objetivo.variables);
 	for (j = 0; j < columnas; j ++)
-	{
 		resultado += (funcion_objetivo.coeficientes [j] * ((poblacion [integrante][j]).momentum));
-	}
 	return resultado;
 }
 
 //Asi se llama el algoritmo que usamos
-void FireFly(integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneticos){
-	int i;
-	float prob,sumaZ,pAcum,*final=malloc(sizeof(float)*geneticos.integrantes);
-	float *aleat = malloc(sizeof(float)*geneticos.integrantes);
-	float *pAcumE = malloc(sizeof(float)*geneticos.integrantes);;
-	srand(time(NULL));
-	for (i = 0; i < geneticos.integrantes; i ++)
+void FireFly(integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneticos)
+{
+	int i, j;
+	float prob, sumaZ, pAcum, auxiliar;
+	int * fuertes = (int *) malloc (sizeof (int) * (geneticos.integrantes));
+	float * valor_funcion_objetivo = malloc (sizeof (float) * (geneticos.integrantes));
+	float * aleat = (float *) malloc (sizeof (float) * (geneticos.integrantes));
+	float * pAcumE = (float *) malloc (sizeof (float) * (geneticos.integrantes));
+	srand (time (NULL));
+	for (i = 0, sumaZ = 0, pAcum = 0; i < geneticos.integrantes; i ++)
 	{
-		final[i] = evaluar_funcion_objetivo (poblacion, funcion_objetivo, geneticos, i);
-		sumaZ += final[i];
-
-		printf ("\n\nEvaluación para integrante %d: %f", (i + 1), final[i]);
+		valor_funcion_objetivo [i] = evaluar_funcion_objetivo (poblacion, funcion_objetivo, geneticos, i);
+		sumaZ += valor_funcion_objetivo [i];
 	}
 	printf ("\n\n");
 	printf("VECTOR\t\tZ\t\tP(z)\t\tPacum\t\t#Alet\n"); 
-	for (i = 0; i < geneticos.integrantes; ++i)
+	for (i = 0; i < geneticos.integrantes; i ++)
 	{
-		aleat[i] = (rand() % 10000)/10000.0;
-		pAcumE[i] = pAcum += obtener_probabilidad(sumaZ,final[i]);
-		prob = obtener_probabilidad(sumaZ,final[i]);
-		printf("V%i\t%f\t%f\t%f\t%f\n",i+1,final[i],prob,pAcum,aleat[i]);
+		aleat [i] = ((rand() % 10000)/10000.0);
+		prob = obtener_probabilidad (sumaZ, valor_funcion_objetivo [i]);
+		pAcum += prob;
+		pAcumE [i] = pAcum;
+		printf("V%i\t%f\t%f\t%f\t%f\n", (i+1), valor_funcion_objetivo [i], prob, pAcum, aleat [i]);
 	}
+	i = 0; j = 0;
+	while (i < geneticos.integrantes)
+	{
+		auxiliar = (pAcumE [j ++] - aleat [i]);
+		if (auxiliar >= 0)
+		{
+			fuertes [i ++] = (j - 1);
+			j = 0;
+		}
+	}
+	for (i = 0; i < geneticos.integrantes; i ++)
+		(poblacion [i][0]).apariciones = 0;
+	for (i = 0; i < geneticos.integrantes; i ++)
+	{
+		j = fuertes [i];
+		(poblacion [j][0]).apariciones ++;
+	}
+	printf ("\n\n\nAPARICION DE VECTORES\n\n");
+	for (i = 0; i < geneticos.integrantes; i ++)
+		printf ("Vector %d: %d\n", (i + 1), ((poblacion [i][0]).apariciones));
 }
 
 int nuevo_integrante(float *aleat, float *pAcum, int integrante, Condiciones_AG geneticos){
