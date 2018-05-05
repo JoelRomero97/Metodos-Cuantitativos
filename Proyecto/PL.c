@@ -387,41 +387,36 @@ integrante ** obtener_primera_poblacion (Z funcion_objetivo, Limites * variables
 {
 	int i, j, k, num_bits, columnas, filas, superior, inferior, aux;
 	filas = (condiciones.integrantes);
-	boolean flag = FALSE;
 	columnas = strlen (funcion_objetivo.variables);
 	float * valores = (float *) malloc (sizeof (float) * columnas);
 	//Población de integrantes (filas) para cada variable (columnas)
 	integrante ** poblacion = matriz_poblacion (filas, columnas);
 	//Se calcula el número de bits de cada integrante de la población
-	while (!flag)
+	srand (time (NULL));
+	for (i = 0; i < filas; i ++)
 	{
-		srand (time (NULL));
-		for (i = 0; i < filas; i ++)
+		for (j = 0; j < columnas; j ++)
 		{
-			for (j = 0; j < columnas; j ++)
+			superior = round ((variables [j]).superior);
+			inferior = round ((variables [j]).inferior);
+			aux = ((superior - inferior) * (pow (10, condiciones.bits_precision)));
+			num_bits = ceil ((log10 (aux)) / (log10 (2)));
+			((poblacion [i][j]).binario) = (char *) malloc (sizeof (char) * num_bits);
+			for (k = 0; k < num_bits; k ++)
 			{
-				superior = round ((variables [j]).superior);
-				inferior = round ((variables [j]).inferior);
-				aux = ((superior - inferior) * (pow (10, condiciones.bits_precision)));
-				num_bits = ceil ((log10 (aux)) / (log10 (2)));
-				((poblacion [i][j]).binario) = (char *) malloc (sizeof (char) * num_bits);
-				for (k = 0; k < num_bits; k ++)
-				{
-					if ((rand () % 2))
-						((poblacion [i][j]).binario [k]) = '1';
-					else
-						((poblacion [i][j]).binario [k]) = '0';
-				}
-				((poblacion [i][j]).binario [k]) = '\0';
-				((poblacion [i][j]).decimal) = binario_to_decimal ((poblacion [i][j]).binario);
-				((poblacion [i][j]).momentum) = (inferior + (((poblacion [i][j]).decimal) * ((superior - inferior) / (pow (2, num_bits) - 1))));
+				if ((rand () % 2))
+					((poblacion [i][j]).binario [k]) = '1';
+				else
+					((poblacion [i][j]).binario [k]) = '0';
 			}
-			for (j = 0; j < columnas; j ++)
-				valores [j] = ((poblacion [i][j]).momentum);
-			flag = evaluar_restricciones (valores, restricciones, funcion_objetivo);
-			if (!flag)
-				i --;
+			((poblacion [i][j]).binario [k]) = '\0';
+			((poblacion [i][j]).decimal) = binario_to_decimal ((poblacion [i][j]).binario);
+			((poblacion [i][j]).momentum) = (inferior + (((poblacion [i][j]).decimal) * ((superior - inferior) / (pow (2, num_bits) - 1))));
 		}
+		for (j = 0; j < columnas; j ++)
+			valores [j] = ((poblacion [i][j]).momentum);
+		if (!evaluar_restricciones (valores, restricciones, funcion_objetivo))
+			i --;
 	}
 	print_poblacion (poblacion, filas, columnas);
 	return poblacion;
