@@ -9,11 +9,11 @@
 //Estructura para almacenar algunas condiciones iniciales del problema
 typedef struct Condiciones_AG
 {
-	short tiempo_maximo;				//Almacena el tiempo máximo de resolución (minutos)
+	int tiempo_maximo;					//Almacena el tiempo máximo de resolución (minutos)
 	float error_maximo;					//Almacena el error máximo permitido (porcentaje)
-	short it_max;						//Almacena el número de iteraciones máximas del problema
+	int it_max;							//Almacena el número de iteraciones máximas del problema
 	short bits_precision;				//Almacena el número de bits de precisión
-	short integrantes;					//Almacena el número de integrantes de la población
+	int integrantes;					//Almacena el número de integrantes de la población
 }Condiciones_AG;
 
 //Estructura para almacenar la Función Objetivo
@@ -76,3 +76,4 @@ void FireFly (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneti
 integrante ** generar_nueva_poblacion (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneticos, Limites * variables);
 char * cruzar_vectores (char * vector1, char * vector2);
 char * mutar_vector (char * vector);
+void tomar_tiempo (double * walltime);

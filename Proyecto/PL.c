@@ -16,16 +16,16 @@ Condiciones_AG obtener_condiciones_iniciales ()
 	system (clear);
 	printf ("\n______________________________ALGORITMOS GENÉTICOS______________________________\n");
 	printf ("\n\nIngresa el tiempo máximo de procesamiento (minutos):\t");
-	scanf ("%hd", &auxiliar.tiempo_maximo);
+	scanf ("%d", &auxiliar.tiempo_maximo);
 	printf ("\n\nIngresa el error máximo permitido (porcentaje):\t\t");
 	scanf ("%f", &auxiliar.error_maximo);
 	auxiliar.error_maximo = (auxiliar.error_maximo * 0.01);
 	printf ("\n\nIngresa el número máximo de iteraciones:\t\t");
-	scanf ("%hd", &auxiliar.it_max);
+	scanf ("%d", &auxiliar.it_max);
 	printf ("\n\nIngresa el número de bits de precisión deseados:\t");
 	scanf ("%hd", &auxiliar.bits_precision);
 	printf ("\n\nIngresa el número de integrantes por población:\t\t");
-	scanf ("%hd", &auxiliar.integrantes);
+	scanf ("%d", &auxiliar.integrantes);
 	return auxiliar;
 }
 
@@ -510,10 +510,15 @@ void solve (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG genetico
 {
 	int i, j;
 	char * fuerte1 = (char *) malloc (sizeof (char));
+	double tiempo_inicial, tiempo_final;
+	tomar_tiempo (&tiempo_inicial);
 	for (i = 0; i < geneticos.it_max; i ++)
 	{
 		FireFly (poblacion, funcion_objetivo, geneticos);
 		poblacion = generar_nueva_poblacion (poblacion, funcion_objetivo, geneticos, variables);
+		tomar_tiempo (&tiempo_final);
+		if ((tiempo_final - tiempo_inicial) >= (geneticos.tiempo_maximo * 60))
+			break;
 	}
 }
 
@@ -560,9 +565,6 @@ void FireFly (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneti
 		j = fuertes [i];
 		(poblacion [j][0]).apariciones ++;
 	}
-	/*printf ("\n\n\nAPARICION DE VECTORES\n\n");
-	for (i = 0; i < geneticos.integrantes; i ++)
-		printf ("Vector %d: %d\n", (i + 1), ((poblacion [i][0]).apariciones));*/
 }
 
 //Retorna una nueva población con nuevos vectores mejorados (cruza o mutaciones)
@@ -600,7 +602,6 @@ integrante ** generar_nueva_poblacion (integrante ** poblacion, Z funcion_objeti
 		{
 			num_bits = strlen (poblacion [0][j].binario);
 			char * nuevo_vector = (char *) malloc (sizeof (char) * num_bits);
-			//Si solamente existe un vector fuerte
 			if (fuerte2 < 0)
 				nuevo_vector = mutar_vector ((poblacion [fuerte1][j]).binario);
 			else
@@ -656,4 +657,15 @@ char * mutar_vector (char * vector)
 	else
 		printf ("\n\nError al mutar el vector '%s'\n\n", vector);
 	return vector;
+}
+
+void tomar_tiempo (double * walltime)
+{
+	double mega = 1.0e-6;
+	struct rusage buffer;
+	struct timeval tp;
+	struct timezone tzp;
+	getrusage(RUSAGE_SELF, &buffer);
+	gettimeofday(&tp, &tzp);
+	*walltime = (double) tp.tv_sec + 1.0e-6 * tp.tv_usec; 
 }
