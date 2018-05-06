@@ -1,3 +1,5 @@
+#include <sys/resource.h>
+#include <sys/time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -5,6 +7,9 @@
 #include <math.h>
 #include "PL.h"
 
+//FUNCIONES PARA OBTENER LOS VALORES PARA ARRANCAR EL ALGORITMO
+
+//Regresa las condiciones iniciales del problema y las condiciones de paro del mismo
 Condiciones_AG obtener_condiciones_iniciales ()
 {
 	Condiciones_AG auxiliar;												//Estructura para almacenar las condiciones del problema
@@ -24,6 +29,7 @@ Condiciones_AG obtener_condiciones_iniciales ()
 	return auxiliar;
 }
 
+//Imprime las condiciones iniciales del problema y las condiciones de paro del mismo
 void imprimir_condiciones_iniciales (Condiciones_AG condiciones)
 {
 	printf ("\n\nTiempo máximo: %d", condiciones.tiempo_maximo);
@@ -33,16 +39,7 @@ void imprimir_condiciones_iniciales (Condiciones_AG condiciones)
 	printf ("\nNúmero de integrantes por población: %d", condiciones.integrantes);
 }
 
-Z obtener_funcion_objetivo ()
-{
-	Z funcion_objetivo;
-	//Obtener el criterio de optimización
-	funcion_objetivo.criterio = criterio_funcion_objetivo ();
-	//Obtener los coeficientes y variables de la F.O según el criterio
-	funcion_objetivo = cuerpo_funcion_objetivo (funcion_objetivo);
-	return funcion_objetivo;
-}
-
+//Retorna el criterio del problema (maximizar/minimizar)
 int criterio_funcion_objetivo ()
 {
 	int criterio;
@@ -54,6 +51,18 @@ int criterio_funcion_objetivo ()
 		return 1;
 }
 
+//Retorna la función objetivo
+Z obtener_funcion_objetivo ()
+{
+	Z funcion_objetivo;
+	//Obtener el criterio de optimización
+	funcion_objetivo.criterio = criterio_funcion_objetivo ();
+	//Obtener los coeficientes y variables de la F.O según el criterio
+	funcion_objetivo = cuerpo_funcion_objetivo (funcion_objetivo);
+	return funcion_objetivo;
+}
+
+//Obtiene por separado las variables y coeficientes de la función objetivo
 Z cuerpo_funcion_objetivo (Z objetivo)
 {
 	Z aux;
@@ -101,6 +110,7 @@ Z cuerpo_funcion_objetivo (Z objetivo)
 	return aux;
 }
 
+//Retorna la lista de restricciones del problema
 lista obtener_restricciones ()
 {
 	boolean otra = TRUE;													//Inicializar un booleano en verdadero 
@@ -123,6 +133,7 @@ lista obtener_restricciones ()
 	return restricciones;
 }
 
+//Obtiene por separado las variables, coeficientes, criterio y límite de cada restricción
 restriccion cuerpo_restriccion (char numero_restriccion)
 {
 	restriccion res;
@@ -177,6 +188,7 @@ restriccion cuerpo_restriccion (char numero_restriccion)
 	return res;
 }
 
+//Imprime la función objetivo y las restricciones 
 void imprimir_problema_inicial (Z objetivo, lista * restricciones)
 {
 	restriccion r;
@@ -221,20 +233,23 @@ void imprimir_problema_inicial (Z objetivo, lista * restricciones)
 		printf ("\n\nNo existen restricciones\n\n");
 	return;
 }
-/*Funcion: obtener_limites_variables
-Recibe: Lista de restricciones, funcion obejetivo
-Retorna: Array con los limites de cada variable*/
-Limites * obtener_limites_variables (lista * restricciones, Z FO)
+
+
+
+//FUNCIONES PARA OBTENER LOS LÍMITES DE CADA UNA DE LAS VARIABLES A PARTIR DE LAS RESTRICCIONES
+
+//Obtiene los límites de cada variable de la función objetivo
+Limites * obtener_limites_variables (lista * restricciones, Z funcion_objetivo)
 {
 	lista res;
-	int i, j,s=0;
+	int i, j,s = 0;
 	restriccion r;
 	Limites * aux = (Limites*) malloc (sizeof (Limites));
 	Initialize (&res);
-	for (i = 0; i < strlen(FO.variables); i ++)
+	for (i = 0; i < strlen (funcion_objetivo.variables); i ++)
 	{
-		res = obtener_restricciones_dependientes(restricciones,FO.variables[i]);
-		aux[s++]= obtener_valores_limites(&res,FO.variables[i]);
+		res = obtener_restricciones_dependientes (restricciones, funcion_objetivo.variables [i]);
+		aux [s++] = obtener_valores_limites (&res, funcion_objetivo.variables [i]);
 	}
 	printf ("\n\nLimite de las variables:\n\n");
 	for (i = 0; i < s; i ++)
@@ -247,9 +262,7 @@ Limites * obtener_limites_variables (lista * restricciones, Z FO)
 	return aux;
 }
 
-/*Funcion:invertir_restriccion
-Recibe: restriccion r
-Retorna: restriccion r invertida*/
+//Invierte una restricción de tipo ">"
 restriccion invertir_restriccion (restriccion r)
 {
 	restriccion aux;
@@ -267,9 +280,7 @@ restriccion invertir_restriccion (restriccion r)
 	return aux;
 }
 
-/*Funcion:obtener_restricciones_dependientes
-Recibe: lista de restricciones, variable 
-Retorna: lista con las restricciones donde aparece variable*/
+//Regresa la lista de restricciones que involucran a la variable 'variable'
 lista obtener_restricciones_dependientes (lista * restricciones, char variable)
 {
 	lista variables;
@@ -289,7 +300,7 @@ lista obtener_restricciones_dependientes (lista * restricciones, char variable)
 	return variables;
 }
 
-//Funcion de prueba 
+//Imprime las restricciones
 void printR (lista * restricciones)
 {
 	int i, j;
@@ -325,64 +336,35 @@ void shell_sort (float * numeros, int n)
 	return;
 }
 
-/*Funcion: obtener_valores_limites
-Recibe: lista de restricciones dependientes l, variable 
-Retorna: Los limites superior e inferior de la variable 'var'*/
-Limites obtener_valores_limites (lista *l, char var)
+//Obtiene los límites inferior y superior de cada variable a partir de la lista
+Limites obtener_valores_limites (lista * restricciones, char variable)
 {
 	Limites lim;
 	restriccion r;
 	int i, j, tam = 0;
 	float *aux = (float*) malloc (sizeof (float));
-	for (i = 0; i < Size (l); i ++)
+	for (i = 0; i < Size (restricciones); i ++)
 	{
-		r = Element (l, i + 1);
+		r = Element (restricciones, i + 1);
 		for (j = 0; j < strlen (r.variables); j ++)
 		{
-			if (r.variables [j] == var)
+			if (r.variables [j] == variable)
 				aux [tam ++] = (r.limite / (r.coeficientes [j]));
 		}
 	}
 	shell_sort (aux, tam);
 	lim.inferior = 0;
 	lim.superior = (aux [tam - 1]);
-	lim.variable = var;
+	lim.variable = variable;
 	free (aux);
 	return lim;
 }
 
-char * cruzar_vectores (char * vector1, char * vector2)
-{
-	int i, cromosomas_vector1;
-	int tam = strlen (vector1);
-	srand (time (NULL));
-	//Se obtiene aleatoriamente el número de bits del vector 1
-	cromosomas_vector1 = (rand () % tam);
-	//Se copian los bits restantes del vector 2 al resultado
-	for (i = cromosomas_vector1; i < tam; i ++)
-		vector1 [i] = vector2 [i];
-	vector1 [i] = '\0';
-	return vector1;
-}
 
-char * mutar_vector (char * vector)
-{
-	//Se obtiene el número de cromosomas del vector
-	int tam = strlen (vector);
-	int bit;
-	srand (time (NULL));
-	//Se genera aleatoriamente el bit en el que se realizará la mutación
-	bit = (rand () % tam);
-	//Se cambia el cromosoma por 0 o 1 según corresponda
-	if (vector [bit] == '0')
-		vector [bit] = '1';
-	else if (vector [bit] == '1')
-		vector [bit] = '0';
-	else
-		printf ("\n\nError al mutar el vector '%s'\n\n", vector);
-	return vector;
-}
 
+//FUNCIONES PARA OBTENER LA PRIMERA POBLACIÓN DEL PROBLEMA
+
+//Retorna la matriz población con valor binario, decimal y genotipo
 integrante ** obtener_primera_poblacion (Z funcion_objetivo, Limites * variables, Condiciones_AG condiciones, lista * restricciones)
 {
 	int i, j, k, num_bits, columnas, filas, superior, inferior, aux;
@@ -411,7 +393,8 @@ integrante ** obtener_primera_poblacion (Z funcion_objetivo, Limites * variables
 			}
 			((poblacion [i][j]).binario [k]) = '\0';
 			((poblacion [i][j]).decimal) = binario_to_decimal ((poblacion [i][j]).binario);
-			((poblacion [i][j]).momentum) = (inferior + (((poblacion [i][j]).decimal) * ((superior - inferior) / (pow (2, num_bits) - 1))));
+			//((poblacion [i][j]).momentum) = (inferior + (((poblacion [i][j]).decimal) * ((superior - inferior) / (pow (2, num_bits) - 1))));
+			((poblacion [i][j]).momentum) = obtener_genotipo (poblacion [i][j].decimal, variables [j], num_bits);
 		}
 		for (j = 0; j < columnas; j ++)
 			valores [j] = ((poblacion [i][j]).momentum);
@@ -422,6 +405,17 @@ integrante ** obtener_primera_poblacion (Z funcion_objetivo, Limites * variables
 	return poblacion;
 }
 
+//Retorna una matriz población vacía de n filas por m columnas
+integrante ** matriz_poblacion (int filas, int columnas)
+{
+	int i;
+	integrante ** matriz = (integrante **) malloc (sizeof (integrante *) * filas);
+	for (i = 0; i < filas; i ++)
+		matriz [i] = (integrante *) malloc (sizeof (integrante) * columnas);
+	return matriz;
+}
+
+//Imprime por separado los valores binario, decimal y genotipo de la población
 void print_poblacion (integrante ** poblacion, int filas, int columnas)
 {
 	int i, j, k;
@@ -452,15 +446,16 @@ void print_poblacion (integrante ** poblacion, int filas, int columnas)
 	}
 }
 
-integrante ** matriz_poblacion (int filas, int columnas)
+//Retorna el genotipo de una variable de un vector
+float obtener_genotipo (int decimal, Limites variable, int num_bits)
 {
-	int i;
-	integrante ** matriz = (integrante **) malloc (sizeof (integrante *) * filas);
-	for (i = 0; i < filas; i ++)
-		matriz [i] = (integrante *) malloc (sizeof (integrante) * columnas);
-	return matriz;
+	int inferior, superior;
+	superior = round (variable.superior);
+	inferior = round (variable.inferior);
+	return (inferior + (decimal * ((superior - inferior) / (pow (2, num_bits) - 1))));
 }
 
+//Convierte una cadena de 0's y 1's (número binario) en un número decimal
 int binario_to_decimal (char * binario)
 {
 	int i, numero = 0, flag = 0;
@@ -473,7 +468,12 @@ int binario_to_decimal (char * binario)
 	return numero;
 }
 
-float evaluar_funcion_objetivo (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG condiciones, int integrante)
+
+
+//FUNCIONES PARA EVALUAR FUNCIONES (FUNCIÓN OBJETIVO Y RESTRICCIONES)
+
+//Evalua al integrante 'integrante' de la población en la función objetivo
+float evaluar_funcion_objetivo (integrante ** poblacion, Z funcion_objetivo, int integrante)
 {
 	int j, columnas;
 	float resultado = 0;
@@ -483,6 +483,7 @@ float evaluar_funcion_objetivo (integrante ** poblacion, Z funcion_objetivo, Con
 	return resultado;
 }
 
+//Evalúa un vector completo de la población en todas las restricciones para verificar que todas se cumplan
 boolean evaluar_restricciones (float * valores, lista * restricciones, Z funcion_objetivo)
 {
 	int i, j, columnas, numero_restricciones;
@@ -502,8 +503,24 @@ boolean evaluar_restricciones (float * valores, lista * restricciones, Z funcion
 	return TRUE;
 }
 
-//Asi se llama el algoritmo que usamos
-void FireFly(integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneticos)
+
+
+//FUNCIONES PARA RESOLVER EL PROBLEMA, COMIENZA EL ALGORITMO
+
+//Función maestra para llamar al algoritmo n veces dependiendo de las condiciones iniciales (tiempo, error e iteraciones)
+void solve (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneticos)
+{
+	int i, j;
+	char * fuerte1 = (char *) malloc (sizeof (char));
+	for (i = 0; i < geneticos.it_max; i ++)
+	{
+		FireFly (poblacion, funcion_objetivo, geneticos);
+		//poblacion = generar_nueva_poblacion (poblacion, funcion_objetivo, geneticos);
+	}
+}
+
+//Algoritmo genético utilizado con una población P, una función objetivo Z y unas condiciones iniciales G
+void FireFly (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneticos)
 {
 	int i, j;
 	float prob, sumaZ, pAcum, auxiliar;
@@ -514,7 +531,7 @@ void FireFly(integrante ** poblacion, Z funcion_objetivo, Condiciones_AG genetic
 	srand (time (NULL));
 	for (i = 0, sumaZ = 0, pAcum = 0; i < geneticos.integrantes; i ++)
 	{
-		valor_funcion_objetivo [i] = evaluar_funcion_objetivo (poblacion, funcion_objetivo, geneticos, i);
+		valor_funcion_objetivo [i] = evaluar_funcion_objetivo (poblacion, funcion_objetivo, i);
 		sumaZ += valor_funcion_objetivo [i];
 	}
 	printf ("\n\n");
@@ -522,7 +539,7 @@ void FireFly(integrante ** poblacion, Z funcion_objetivo, Condiciones_AG genetic
 	for (i = 0; i < geneticos.integrantes; i ++)
 	{
 		aleat [i] = ((rand() % 10000)/10000.0);
-		prob = obtener_probabilidad (sumaZ, valor_funcion_objetivo [i]);
+		prob = (valor_funcion_objetivo [i] / sumaZ);
 		pAcum += prob;
 		pAcumE [i] = pAcum;
 		printf("V%i\t%f\t%f\t%f\t%f\n", (i+1), valor_funcion_objetivo [i], prob, pAcum, aleat [i]);
@@ -544,23 +561,47 @@ void FireFly(integrante ** poblacion, Z funcion_objetivo, Condiciones_AG genetic
 		j = fuertes [i];
 		(poblacion [j][0]).apariciones ++;
 	}
-	printf ("\n\n\nAPARICION DE VECTORES\n\n");
+	/*printf ("\n\n\nAPARICION DE VECTORES\n\n");
 	for (i = 0; i < geneticos.integrantes; i ++)
-		printf ("Vector %d: %d\n", (i + 1), ((poblacion [i][0]).apariciones));
+		printf ("Vector %d: %d\n", (i + 1), ((poblacion [i][0]).apariciones));*/
 }
 
-int nuevo_integrante(float *aleat, float *pAcum, int integrante, Condiciones_AG geneticos){
-	int i,j;
-	int pos=0;
-	float *aux = malloc(sizeof(float)*geneticos.integrantes);
-	for (i = 0; i < geneticos.integrantes ; i++)
-	{
-		aux[i] = aleat[integrante] - pAcum[i];
-		
-	}
-	return 0;
+//Retorna una nueva población con nuevos vectores mejorados (cruza o mutaciones)
+/*integrante ** generar_nueva_poblacion (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneticos)
+{
+	//
+}*/
+
+//Retorna la cruza de 2 vectores
+char * cruzar_vectores (char * vector1, char * vector2)
+{
+	int i, cromosomas_vector1;
+	int tam = strlen (vector1);
+	srand (time (NULL));
+	//Se obtiene aleatoriamente el número de bits del vector 1
+	cromosomas_vector1 = (rand () % tam);
+	//Se copian los bits restantes del vector 2 al resultado
+	for (i = cromosomas_vector1; i < tam; i ++)
+		vector1 [i] = vector2 [i];
+	vector1 [i] = '\0';
+	return vector1;
 }
 
-float obtener_probabilidad(float sumaZ, float valorZ){
-	return (valorZ/sumaZ);
+//Retorna un vector mutado en un bit
+char * mutar_vector (char * vector)
+{
+	//Se obtiene el número de cromosomas del vector
+	int tam = strlen (vector);
+	int bit;
+	srand (time (NULL));
+	//Se genera aleatoriamente el bit en el que se realizará la mutación
+	bit = (rand () % tam);
+	//Se cambia el cromosoma por 0 o 1 según corresponda
+	if (vector [bit] == '0')
+		vector [bit] = '1';
+	else if (vector [bit] == '1')
+		vector [bit] = '0';
+	else
+		printf ("\n\nError al mutar el vector '%s'\n\n", vector);
+	return vector;
 }
