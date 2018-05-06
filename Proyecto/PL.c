@@ -506,7 +506,7 @@ boolean evaluar_restricciones (float * valores, lista * restricciones, Z funcion
 //FUNCIONES PARA RESOLVER EL PROBLEMA, COMIENZA EL ALGORITMO
 
 //Función maestra para llamar al algoritmo n veces dependiendo de las condiciones iniciales (tiempo, error e iteraciones)
-void solve (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneticos, Limites * variables)
+void solve (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneticos, Limites * variables, lista * restricciones)
 {
 	int i, j;
 	char * fuerte1 = (char *) malloc (sizeof (char));
@@ -515,7 +515,7 @@ void solve (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG genetico
 	for (i = 0; i < geneticos.it_max; i ++)
 	{
 		FireFly (poblacion, funcion_objetivo, geneticos);
-		poblacion = generar_nueva_poblacion (poblacion, funcion_objetivo, geneticos, variables);
+		poblacion = generar_nueva_poblacion (poblacion, funcion_objetivo, geneticos, variables, restricciones);
 		tomar_tiempo (&tiempo_final);
 		if ((tiempo_final - tiempo_inicial) >= (geneticos.tiempo_maximo * 60))
 			break;
@@ -568,13 +568,14 @@ void FireFly (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneti
 }
 
 //Retorna una nueva población con nuevos vectores mejorados (cruza o mutaciones)
-integrante ** generar_nueva_poblacion (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneticos, Limites * variables)
+integrante ** generar_nueva_poblacion (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneticos, Limites *variables, lista *restricciones)
 {
 	int i, j, k, columnas, filas, num_bits, maximo1 = 0, maximo2 = 0;
 	int fuerte1 = -1;										//Posición del vector más fuerte
 	int fuerte2 = -1;										//Posición del 2do vector más fuerte (no necesariamente hay uno)
 	filas = (geneticos.integrantes);
 	columnas = strlen (funcion_objetivo.variables);
+	float * valores = (float *) malloc (sizeof (float) * columnas);
 	for (i = 0; i < filas; i ++)
 	{
 		if ((poblacion [i][0]).apariciones > 0)
@@ -612,6 +613,10 @@ integrante ** generar_nueva_poblacion (integrante ** poblacion, Z funcion_objeti
 			((poblacion [i][j]).decimal) = binario_to_decimal ((poblacion [i][j]).binario);
 			((poblacion [i][j]).momentum) = obtener_genotipo (poblacion [i][j].decimal, variables [j], num_bits);
 		}
+		for (j = 0; j < columnas; j ++)
+			valores [j] = ((poblacion [i][j]).momentum);
+		if (!evaluar_restricciones (valores, restricciones, funcion_objetivo))
+			i --;
 	}
 	return poblacion;
 }
@@ -622,8 +627,8 @@ char * cruzar_vectores (char * vector1, char * vector2)
 	int i, cromosomas_vector1;
 	int tam = strlen (vector1);
 	srand (time (NULL));
-	//Se obtiene aleatoriamente el número de bits del vector 1
-	cromosomas_vector1 = (rand () % tam);
+	cromosomas_vector1 = (rand () % (tam - 1)) + 1;
+	srand (time (NULL));
 	i = (rand () % 2);
 	if (i)
 	{

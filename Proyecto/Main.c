@@ -20,6 +20,6 @@ int main(int argc, char const *argv[])
 	//imprimir_problema_inicial (funcion_objetivo, &restricciones);
 	lim = obtener_limites_variables(&restricciones, funcion_objetivo);
 	poblacion = obtener_primera_poblacion (funcion_objetivo, lim, geneticos, &restricciones);
-	solve (poblacion, funcion_objetivo, geneticos, lim);
+	solve (poblacion, funcion_objetivo, geneticos, lim, &restricciones);
 	return 0;
 }
