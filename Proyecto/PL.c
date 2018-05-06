@@ -365,10 +365,10 @@ Limites obtener_valores_limites (lista * restricciones, char variable)
 //FUNCIONES PARA OBTENER LA PRIMERA POBLACIÓN DEL PROBLEMA
 
 //Retorna la matriz población con valor binario, decimal y genotipo
-integrante ** obtener_primera_poblacion (Z funcion_objetivo, Limites * variables, Condiciones_AG condiciones, lista * restricciones)
+integrante ** obtener_primera_poblacion (Z funcion_objetivo, Limites * variables, Condiciones_AG geneticos, lista * restricciones)
 {
 	int i, j, k, num_bits, columnas, filas, superior, inferior, aux;
-	filas = (condiciones.integrantes);
+	filas = (geneticos.integrantes);
 	columnas = strlen (funcion_objetivo.variables);
 	float * valores = (float *) malloc (sizeof (float) * columnas);
 	//Población de integrantes (filas) para cada variable (columnas)
@@ -381,7 +381,7 @@ integrante ** obtener_primera_poblacion (Z funcion_objetivo, Limites * variables
 		{
 			superior = round ((variables [j]).superior);
 			inferior = round ((variables [j]).inferior);
-			aux = ((superior - inferior) * (pow (10, condiciones.bits_precision)));
+			aux = ((superior - inferior) * (pow (10, geneticos.bits_precision)));
 			num_bits = ceil ((log10 (aux)) / (log10 (2)));
 			((poblacion [i][j]).binario) = (char *) malloc (sizeof (char) * num_bits);
 			for (k = 0; k < num_bits; k ++)
@@ -393,7 +393,6 @@ integrante ** obtener_primera_poblacion (Z funcion_objetivo, Limites * variables
 			}
 			((poblacion [i][j]).binario [k]) = '\0';
 			((poblacion [i][j]).decimal) = binario_to_decimal ((poblacion [i][j]).binario);
-			//((poblacion [i][j]).momentum) = (inferior + (((poblacion [i][j]).decimal) * ((superior - inferior) / (pow (2, num_bits) - 1))));
 			((poblacion [i][j]).momentum) = obtener_genotipo (poblacion [i][j].decimal, variables [j], num_bits);
 		}
 		for (j = 0; j < columnas; j ++)
@@ -401,7 +400,6 @@ integrante ** obtener_primera_poblacion (Z funcion_objetivo, Limites * variables
 		if (!evaluar_restricciones (valores, restricciones, funcion_objetivo))
 			i --;
 	}
-	print_poblacion (poblacion, filas, columnas);
 	return poblacion;
 }
 
@@ -508,14 +506,14 @@ boolean evaluar_restricciones (float * valores, lista * restricciones, Z funcion
 //FUNCIONES PARA RESOLVER EL PROBLEMA, COMIENZA EL ALGORITMO
 
 //Función maestra para llamar al algoritmo n veces dependiendo de las condiciones iniciales (tiempo, error e iteraciones)
-void solve (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneticos)
+void solve (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneticos, Limites * variables)
 {
 	int i, j;
 	char * fuerte1 = (char *) malloc (sizeof (char));
 	for (i = 0; i < geneticos.it_max; i ++)
 	{
 		FireFly (poblacion, funcion_objetivo, geneticos);
-		//poblacion = generar_nueva_poblacion (poblacion, funcion_objetivo, geneticos);
+		poblacion = generar_nueva_poblacion (poblacion, funcion_objetivo, geneticos, variables);
 	}
 }
 
@@ -528,6 +526,7 @@ void FireFly (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneti
 	float * valor_funcion_objetivo = malloc (sizeof (float) * (geneticos.integrantes));
 	float * aleat = (float *) malloc (sizeof (float) * (geneticos.integrantes));
 	float * pAcumE = (float *) malloc (sizeof (float) * (geneticos.integrantes));
+	print_poblacion (poblacion, geneticos.integrantes, strlen (funcion_objetivo.variables));
 	srand (time (NULL));
 	for (i = 0, sumaZ = 0, pAcum = 0; i < geneticos.integrantes; i ++)
 	{
@@ -567,10 +566,54 @@ void FireFly (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneti
 }
 
 //Retorna una nueva población con nuevos vectores mejorados (cruza o mutaciones)
-/*integrante ** generar_nueva_poblacion (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneticos)
+integrante ** generar_nueva_poblacion (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneticos, Limites * variables)
 {
-	//
-}*/
+	int i, j, k, columnas, filas, num_bits, maximo1 = 0, maximo2 = 0;
+	int fuerte1 = -1;										//Posición del vector más fuerte
+	int fuerte2 = -1;										//Posición del 2do vector más fuerte (no necesariamente hay uno)
+	filas = (geneticos.integrantes);
+	columnas = strlen (funcion_objetivo.variables);
+	for (i = 0; i < filas; i ++)
+	{
+		if ((poblacion [i][0]).apariciones > 0)
+		{
+			if ((poblacion [i][0]).apariciones >= maximo1)
+			{
+				fuerte2 = fuerte1;
+				fuerte1 = i;
+				maximo1 = (poblacion [i][0]).apariciones;
+			}else
+			{
+				if ((poblacion [i][0]).apariciones >= maximo2)
+				{
+					fuerte2 = i;
+					maximo2 = (poblacion [i][0]).apariciones;
+				}
+			}
+		}
+	}
+	for (i = 0; i < filas; i ++)
+	{
+		if ((i == fuerte1) || (i == fuerte2))
+			continue;
+		for (j = 0; j < columnas; j ++)
+		{
+			num_bits = strlen (poblacion [0][j].binario);
+			char * nuevo_vector = (char *) malloc (sizeof (char) * num_bits);
+			//Si solamente existe un vector fuerte
+			if (fuerte2 < 0)
+				nuevo_vector = mutar_vector ((poblacion [fuerte1][j]).binario);
+			else
+				nuevo_vector = cruzar_vectores ((poblacion [fuerte1][j]).binario, (poblacion [fuerte2][j]).binario);
+			for (k = 0; k < num_bits; k ++)
+				((poblacion [i][j]).binario [k]) = nuevo_vector [k];
+			((poblacion [i][j]).binario [k]) = '\0';
+			((poblacion [i][j]).decimal) = binario_to_decimal ((poblacion [i][j]).binario);
+			((poblacion [i][j]).momentum) = obtener_genotipo (poblacion [i][j].decimal, variables [j], num_bits);
+		}
+	}
+	return poblacion;
+}
 
 //Retorna la cruza de 2 vectores
 char * cruzar_vectores (char * vector1, char * vector2)
@@ -580,11 +623,20 @@ char * cruzar_vectores (char * vector1, char * vector2)
 	srand (time (NULL));
 	//Se obtiene aleatoriamente el número de bits del vector 1
 	cromosomas_vector1 = (rand () % tam);
-	//Se copian los bits restantes del vector 2 al resultado
-	for (i = cromosomas_vector1; i < tam; i ++)
-		vector1 [i] = vector2 [i];
-	vector1 [i] = '\0';
-	return vector1;
+	i = (rand () % 2);
+	if (i)
+	{
+		for (i = cromosomas_vector1; i < tam; i ++)
+			vector1 [i] = vector2 [i];
+		vector1 [i] = '\0';
+		return vector1;
+	}else
+	{
+		for (i = cromosomas_vector1; i < tam; i ++)
+			vector2 [i] = vector1 [i];
+		vector2 [i] = '\0';
+		return vector2;
+	}
 }
 
 //Retorna un vector mutado en un bit

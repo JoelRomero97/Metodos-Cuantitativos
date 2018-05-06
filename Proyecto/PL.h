@@ -71,8 +71,8 @@ float evaluar_funcion_objetivo (integrante ** poblacion, Z funcion_objetivo, int
 boolean evaluar_restricciones (float * valores, lista * restricciones, Z funcion_objetivo);
 
 //FUNCIONES PARA RESOLVER EL PROBLEMA, COMIENZA EL ALGORITMO
-void solve (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneticos);
+void solve (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneticos, Limites * variables);
 void FireFly (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneticos);
-integrante ** generar_nueva_poblacion (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneticos);
+integrante ** generar_nueva_poblacion (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneticos, Limites * variables);
 char * cruzar_vectores (char * vector1, char * vector2);
 char * mutar_vector (char * vector);
