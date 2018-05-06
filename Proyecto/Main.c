@@ -16,8 +16,6 @@ int main(int argc, char const *argv[])
 	geneticos = obtener_condiciones_iniciales ();								//Se pide tiempo e iteraciones máximas, bits de precisión e integrantes
 	funcion_objetivo = obtener_funcion_objetivo ();								//Obtener la función objetivo del problema
 	restricciones = obtener_restricciones ();									//Obtener las restricciones del problema
-	//imprimir_condiciones_iniciales (geneticos);
-	//imprimir_problema_inicial (funcion_objetivo, &restricciones);
 	lim = obtener_limites_variables(&restricciones, funcion_objetivo);
 	poblacion = obtener_primera_poblacion (funcion_objetivo, lim, geneticos, &restricciones);
 	solve (poblacion, funcion_objetivo, geneticos, lim, &restricciones);

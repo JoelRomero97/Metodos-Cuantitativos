@@ -29,16 +29,6 @@ Condiciones_AG obtener_condiciones_iniciales ()
 	return auxiliar;
 }
 
-//Imprime las condiciones iniciales del problema y las condiciones de paro del mismo
-void imprimir_condiciones_iniciales (Condiciones_AG condiciones)
-{
-	printf ("\n\nTiempo máximo: %d", condiciones.tiempo_maximo);
-	printf ("\nPorcentaje de error: %f", condiciones.error_maximo);
-	printf ("\nNúmero máximo de iteraciones: %d", condiciones.it_max);
-	printf ("\nNúmero de bits de precisión: %d", condiciones.bits_precision);
-	printf ("\nNúmero de integrantes por población: %d", condiciones.integrantes);
-}
-
 //Retorna el criterio del problema (maximizar/minimizar)
 int criterio_funcion_objetivo ()
 {
@@ -188,52 +178,6 @@ restriccion cuerpo_restriccion (char numero_restriccion)
 	return res;
 }
 
-//Imprime la función objetivo y las restricciones 
-void imprimir_problema_inicial (Z objetivo, lista * restricciones)
-{
-	restriccion r;
-	int i, j, numero_restricciones;
-	printf ("\n\nFUNCIÓN OBJETIVO:\t");
-	for (i = 0; i < strlen (objetivo.variables); i ++)
-	{
-		if (i == 0)
-			printf ("%f%c", objetivo.coeficientes [i], objetivo.variables [i]);
-		else
-		{
-			if ((objetivo.coeficientes [i]) >= 0)
-				printf ("+%f%c", objetivo.coeficientes [i], objetivo.variables [i]);
-			else
-				printf ("%f%c", objetivo.coeficientes [i], objetivo.variables [i]);
-		}
-	}
-	printf ("\n\nRESTRICCIONES:\n");
-	numero_restricciones = Size (restricciones);
-	if (numero_restricciones > 0)
-	{
-		for (i = 0; i < numero_restricciones; i ++)
-		{
-			printf ("\nRestriccion %d:\t", i + 1);
-			r = Element (restricciones, i + 1);
-			for (j = 0; j < strlen (r.variables); j ++)
-			{
-				if (j == 0)
-					printf ("%f%c", r.coeficientes [j], r.variables [j]);
-				else
-				{
-					if ((r.coeficientes [j]) >= 0)
-						printf ("+%f%c", r.coeficientes [j], r.variables [j]);
-					else
-						printf ("%f%c", r.coeficientes [j], r.variables [j]);
-				}
-			}
-			printf (" %c= %f", r.comparador, r.limite);
-		}
-		printf ("\n\n");
-	}else
-		printf ("\n\nNo existen restricciones\n\n");
-	return;
-}
-
 
 
 //FUNCIONES PARA OBTENER LOS LÍMITES DE CADA UNA DE LAS VARIABLES A PARTIR DE LAS RESTRICCIONES
@@ -250,14 +194,6 @@ Limites * obtener_limites_variables (lista * restricciones, Z funcion_objetivo)
 	{
 		res = obtener_restricciones_dependientes (restricciones, funcion_objetivo.variables [i]);
 		aux [s++] = obtener_valores_limites (&res, funcion_objetivo.variables [i]);
-	}
-	printf ("\n\nLimite de las variables:\n\n");
-	for (i = 0; i < s; i ++)
-	{
-		printf("Varible: %c\n", ((aux [i]).variable));
-		printf("Limite superior: %f\n", ((aux [i]).superior));
-		printf("Limite inferior: %f\n", ((aux [i]).inferior));
-		printf("\n");
 	}
 	return aux;
 }
@@ -296,21 +232,7 @@ lista obtener_restricciones_dependientes (lista * restricciones, char variable)
 				Add (&variables, r);
 		}
 	}
-	//printR(&variables);
 	return variables;
-}
-
-//Imprime las restricciones
-void printR (lista * restricciones)
-{
-	int i, j;
-	restriccion r;
-	for (i = 0; i < Size (restricciones); i ++)
-	{
-		r = Element(restricciones, i + 1);
-		for (j = 0; j < strlen (r.variables); j ++)
-			printf ("%f%c\n", r.coeficientes [j], r.variables [j]);
-	}
 }
 
 //Algortimo de ordenamiento shell
@@ -413,37 +335,6 @@ integrante ** matriz_poblacion (int filas, int columnas)
 	return matriz;
 }
 
-//Imprime por separado los valores binario, decimal y genotipo de la población
-void print_poblacion (integrante ** poblacion, int filas, int columnas)
-{
-	int i, j, k;
-	printf ("\n\nPOBLACIÓN BINARIO\n\n");
-	for (i = 0; i < filas; i ++)
-	{
-		for (j = 0; j < columnas; j ++)
-		{
-			for (k = 0; k < strlen (poblacion [i][j].binario); k ++)
-				printf ("%c", ((poblacion [i][j]).binario [k]));
-			printf ("\t");
-		}
-		printf ("\n");
-	}
-	printf ("\n\nPOBLACIÓN DECIMAL\n\n");
-	for (i = 0; i < filas; i ++)
-	{
-		for (j = 0; j < columnas; j ++)
-			printf ("%d\t", ((poblacion [i][j]).decimal));
-		printf ("\n");
-	}
-	printf ("\n\nPOBLACIÓN MOMENTUM\n\n");
-	for (i = 0; i < filas; i ++)
-	{
-		for (j = 0; j < columnas; j ++)
-			printf ("%f\t", ((poblacion [i][j]).momentum));
-		printf ("\n");
-	}
-}
-
 //Retorna el genotipo de una variable de un vector
 float obtener_genotipo (int decimal, Limites variable, int num_bits)
 {
@@ -514,16 +405,20 @@ void solve (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG genetico
 	tomar_tiempo (&tiempo_inicial);
 	for (i = 0; i < geneticos.it_max; i ++)
 	{
-		FireFly (poblacion, funcion_objetivo, geneticos);
+		FireFly (poblacion, funcion_objetivo, geneticos, (i + 1));
 		poblacion = generar_nueva_poblacion (poblacion, funcion_objetivo, geneticos, variables, restricciones);
 		tomar_tiempo (&tiempo_final);
 		if ((tiempo_final - tiempo_inicial) >= (geneticos.tiempo_maximo * 60))
+		{
+			printf ("\n\n\n\n\n\tCRITERIO DE FINALIZACIÓN: TIEMPO MÁXIMO ALCANZADO\n\n\n\n");
 			break;
+		}
 	}
+	printf ("\n\n\n\n\n\tCRITERIO DE FINALIZACIÓN: ITERACIONES MÁXIMAS ALCANZADAS\n\n\n\n");
 }
 
 //Algoritmo genético utilizado con una población P, una función objetivo Z y unas condiciones iniciales G
-void FireFly (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneticos)
+void FireFly (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneticos, int iteracion)
 {
 	int i, j;
 	float prob, sumaZ, pAcum, auxiliar;
@@ -531,22 +426,19 @@ void FireFly (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneti
 	float * valor_funcion_objetivo = malloc (sizeof (float) * (geneticos.integrantes));
 	float * aleat = (float *) malloc (sizeof (float) * (geneticos.integrantes));
 	float * pAcumE = (float *) malloc (sizeof (float) * (geneticos.integrantes));
-	print_poblacion (poblacion, geneticos.integrantes, strlen (funcion_objetivo.variables));
 	srand (time (NULL));
 	for (i = 0, sumaZ = 0, pAcum = 0; i < geneticos.integrantes; i ++)
 	{
 		valor_funcion_objetivo [i] = evaluar_funcion_objetivo (poblacion, funcion_objetivo, i);
 		sumaZ += valor_funcion_objetivo [i];
 	}
-	printf ("\n\n");
-	printf("VECTOR\t\tZ\t\tP(z)\t\tPacum\t\t#Alet\n"); 
+	imprimir_valores (poblacion, funcion_objetivo, geneticos, valor_funcion_objetivo, iteracion);
 	for (i = 0; i < geneticos.integrantes; i ++)
 	{
 		aleat [i] = ((rand() % 10000)/10000.0);
 		prob = (valor_funcion_objetivo [i] / sumaZ);
 		pAcum += prob;
 		pAcumE [i] = pAcum;
-		printf("V%i\t%f\t%f\t%f\t%f\n", (i+1), valor_funcion_objetivo [i], prob, pAcum, aleat [i]);
 	}
 	i = 0; j = 0;
 	while (i < geneticos.integrantes)
@@ -664,6 +556,7 @@ char * mutar_vector (char * vector)
 	return vector;
 }
 
+//Toma la hora actual en walltime
 void tomar_tiempo (double * walltime)
 {
 	double mega = 1.0e-6;
@@ -673,4 +566,32 @@ void tomar_tiempo (double * walltime)
 	getrusage(RUSAGE_SELF, &buffer);
 	gettimeofday(&tp, &tzp);
 	*walltime = (double) tp.tv_sec + 1.0e-6 * tp.tv_usec; 
+}
+
+void imprimir_valores (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneticos, float * valor_funcion_objetivo, int iteracion)
+{
+	FILE * archivo;
+	int i, j;
+	int filas = (geneticos.integrantes);
+	int columnas = strlen (funcion_objetivo.variables);
+	archivo = fopen ("Valores.txt", "a");
+	if (archivo == NULL)
+	{
+		printf ("\n\nError al escribir los valores en el archivo.\n\n");
+		exit (0);
+	}
+	for (i = 0; i < 70; i ++)
+		fprintf (archivo, "_");
+	fprintf (archivo, "ITERACIÓN %d", iteracion);
+	for (i = 0; i < 70; i ++)
+		fprintf (archivo, "_");
+	fprintf (archivo, "\n\n");
+	for (i = 0; i < filas; i ++)
+	{
+		for (j = 0; j < columnas; j ++)
+			fprintf (archivo, "Valor de %c%d:\t%f\n", (funcion_objetivo.variables [j]), j, (poblacion [i][j].momentum));
+		fprintf (archivo, "Valor de F.O:\t%f\n\n", (valor_funcion_objetivo [i]));
+	}
+	fprintf (archivo, "\n\n");
+	fclose (archivo);
 }
