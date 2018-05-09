@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include "PL.h"
 
 int main(int argc, char const *argv[])
@@ -13,6 +14,7 @@ int main(int argc, char const *argv[])
 	Condiciones_AG geneticos;													//EStructura para almacenar algunas condiciones del problema
 	Initialize (&restricciones);												//Inicializamos la lista de restricciones
 	system (clear);
+	srand (time (NULL));
 	geneticos = obtener_condiciones_iniciales ();								//Se pide tiempo e iteraciones máximas, bits de precisión e integrantes
 	funcion_objetivo = obtener_funcion_objetivo ();								//Obtener la función objetivo del problema
 	restricciones = obtener_restricciones ();									//Obtener las restricciones del problema

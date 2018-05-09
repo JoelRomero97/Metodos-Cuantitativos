@@ -10,7 +10,6 @@
 typedef struct Condiciones_AG
 {
 	int tiempo_maximo;					//Almacena el tiempo máximo de resolución (minutos)
-	float error_maximo;					//Almacena el error máximo permitido (porcentaje)
 	int it_max;							//Almacena el número de iteraciones máximas del problema
 	short bits_precision;				//Almacena el número de bits de precisión
 	int integrantes;					//Almacena el número de integrantes de la población
@@ -27,8 +26,8 @@ typedef struct Z
 //Estructura para almacenar los limites de las variables
 typedef struct limites
 {
-	float inferior;						//Almacena el limite inferior
-	float superior;						//Almacena el limite superior
+	float inferior;					//Almacena el limite inferior
+	float superior;					//Almacena el limite superior
 	char variable;						//Almacena la variable asociada a los limites
 }Limites;
 
@@ -43,6 +42,7 @@ typedef struct integrante
 
 //FUNCIONES PARA OBTENER LOS VALORES PARA ARRANCAR EL ALGORITMO
 Condiciones_AG obtener_condiciones_iniciales ();
+void imprimir_condiciones_iniciales (Condiciones_AG condiciones);
 int criterio_funcion_objetivo ();
 Z obtener_funcion_objetivo ();
 Z cuerpo_funcion_objetivo (Z objetivo);

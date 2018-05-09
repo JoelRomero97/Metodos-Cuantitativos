@@ -17,16 +17,35 @@ Condiciones_AG obtener_condiciones_iniciales ()
 	printf ("\n______________________________ALGORITMOS GENÉTICOS______________________________\n");
 	printf ("\n\nIngresa el tiempo máximo de procesamiento (minutos):\t");
 	scanf ("%d", &auxiliar.tiempo_maximo);
-	printf ("\n\nIngresa el error máximo permitido (porcentaje):\t\t");
-	scanf ("%f", &auxiliar.error_maximo);
-	auxiliar.error_maximo = (auxiliar.error_maximo * 0.01);
 	printf ("\n\nIngresa el número máximo de iteraciones:\t\t");
 	scanf ("%d", &auxiliar.it_max);
 	printf ("\n\nIngresa el número de bits de precisión deseados:\t");
 	scanf ("%hd", &auxiliar.bits_precision);
 	printf ("\n\nIngresa el número de integrantes por población:\t\t");
 	scanf ("%d", &auxiliar.integrantes);
+	imprimir_condiciones_iniciales (auxiliar);
 	return auxiliar;
+}
+
+//Imprime las condiciones iniciales del problema y las condiciones de paro del mismo
+void imprimir_condiciones_iniciales (Condiciones_AG condiciones)
+{
+	FILE * archivo;
+	archivo = fopen ("Valores.txt", "a");
+	if (archivo == NULL)
+	{
+		printf ("\n\nError al escribir los valores en el archivo.\n\n");
+		exit (0);
+	}
+	for (int i = 0; i < 30; i ++)
+		fprintf (archivo, "_");
+	fprintf (archivo, "CONDICIONES INICIALES");
+	for (int i = 0; i < 30; i ++)
+		fprintf (archivo, "_");
+	fprintf (archivo, "\n\nTiempo máximo: %d", condiciones.tiempo_maximo);
+	fprintf (archivo, "\nNúmero máximo de iteraciones: %d", condiciones.it_max);
+	fprintf (archivo, "\nNúmero de bits de precisión: %d", condiciones.bits_precision);
+	fprintf (archivo, "\nNúmero de integrantes por población: %d", condiciones.integrantes);
 }
 
 //Retorna el criterio del problema (maximizar/minimizar)
@@ -86,14 +105,16 @@ Z cuerpo_funcion_objetivo (Z objetivo)
 		}
 	}
 	//Se inicializan los apuntadores de la estructura de la F.O dependiendo el número de variables leídas
-	(aux.variables) = (char * ) malloc (sizeof (char) * numero_variables);
-	(aux.coeficientes) = (float * ) malloc (sizeof (float) * numero_variables);
+	(aux.variables) = (char * ) malloc (sizeof (char) * (strlen (funcion_objetivo)));
+	(aux.coeficientes) = (float * ) malloc (sizeof (float) * (strlen (funcion_objetivo)));
 	//Se guarda el valor de los coeficientes y la variable correspondiente en la estructura de la F.O
 	for (i = 0; i < numero_variables; i ++)
 	{
 		(aux.variables [i]) = variables [i];
 		(aux.coeficientes [i]) = coeficientes [i];
 	}
+	(aux.variables [i]) = '\0';
+	(aux.coeficientes [i]) = '\0';
 	free (variables);
 	free (coeficiente);
 	free (coeficientes);
@@ -150,7 +171,7 @@ restriccion cuerpo_restriccion (char numero_restriccion)
 			//En las variables se almacena la variable leída
 			variables [numero_variables] = (* ptr);
 			//En los coeficientes se almacena el número leído convertido a flotante
-			coeficientes [numero_variables ++] = (float) atof (coeficiente);
+			coeficientes [numero_variables ++] = ((float) atof (coeficiente));
 			//Se comienza a almacenar un nuevo coeficiente
 			i = 0;
 		}
@@ -161,6 +182,7 @@ restriccion cuerpo_restriccion (char numero_restriccion)
 			(res.comparador) = (* ptr);
 	}
 	coeficiente [i] = '\0';
+	variables [numero_variables] = '\0';
 	//Se inicializan los apuntadores de la estructura de la restricción dependiendo el número de variables leídas
 	(res.limite) = ((float) atof (coeficiente));
 	(res.variables) = (char * ) malloc (sizeof (char) * numero_variables);
@@ -186,14 +208,14 @@ restriccion cuerpo_restriccion (char numero_restriccion)
 Limites * obtener_limites_variables (lista * restricciones, Z funcion_objetivo)
 {
 	lista res;
-	int i, j,s = 0;
+	int i, j;
 	restriccion r;
 	Limites * aux = (Limites*) malloc (sizeof (Limites));
 	Initialize (&res);
 	for (i = 0; i < strlen (funcion_objetivo.variables); i ++)
 	{
 		res = obtener_restricciones_dependientes (restricciones, funcion_objetivo.variables [i]);
-		aux [s++] = obtener_valores_limites (&res, funcion_objetivo.variables [i]);
+		aux [i] = obtener_valores_limites (&res, funcion_objetivo.variables [i]);
 	}
 	return aux;
 }
@@ -213,6 +235,7 @@ restriccion invertir_restriccion (restriccion r)
 		(aux.variables [i]) = (r.variables [i]);
 	}
 	(aux.variables [i]) = '\0';
+	(aux.coeficientes [i]) = '\0';
 	return aux;
 }
 
@@ -229,7 +252,10 @@ lista obtener_restricciones_dependientes (lista * restricciones, char variable)
 		for (j = 0; j < strlen (r.variables); j ++)
 		{
 			if (r.variables [j] == variable)
+			{
 				Add (&variables, r);
+				break;
+			}
 		}
 	}
 	return variables;
@@ -271,7 +297,10 @@ Limites obtener_valores_limites (lista * restricciones, char variable)
 		for (j = 0; j < strlen (r.variables); j ++)
 		{
 			if (r.variables [j] == variable)
+			{
 				aux [tam ++] = (r.limite / (r.coeficientes [j]));
+				break;
+			}
 		}
 	}
 	shell_sort (aux, tam);
@@ -296,7 +325,7 @@ integrante ** obtener_primera_poblacion (Z funcion_objetivo, Limites * variables
 	//Población de integrantes (filas) para cada variable (columnas)
 	integrante ** poblacion = matriz_poblacion (filas, columnas);
 	//Se calcula el número de bits de cada integrante de la población
-	srand (time (NULL));
+	//srand (time (NULL));
 	for (i = 0; i < filas; i ++)
 	{
 		for (j = 0; j < columnas; j ++)
@@ -375,17 +404,17 @@ float evaluar_funcion_objetivo (integrante ** poblacion, Z funcion_objetivo, int
 //Evalúa un vector completo de la población en todas las restricciones para verificar que todas se cumplan
 boolean evaluar_restricciones (float * valores, lista * restricciones, Z funcion_objetivo)
 {
-	int i, j, columnas, numero_restricciones;
+	int i, j, k, columnas, numero_restricciones;
 	restriccion r;
 	float resultado;
 	columnas = strlen (funcion_objetivo.variables);
 	numero_restricciones = Size (restricciones);
 	for (i = 0; i < numero_restricciones; i ++)
 	{
-		resultado = 0;
 		r = Element (restricciones, i + 1);
-		for (j = 0; j < columnas; j ++)
-			resultado += (r.coeficientes [j] * (valores [j]));
+		for (j = 0, resultado = 0, k = 0; j < columnas; j ++)
+			if ((funcion_objetivo.variables [j]) == (r.variables [k]))
+				resultado += (r.coeficientes [k ++] * (valores [j]));
 		if (resultado > r.limite)
 			return FALSE;
 	}
@@ -403,6 +432,7 @@ void solve (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG genetico
 	char * fuerte1 = (char *) malloc (sizeof (char));
 	double tiempo_inicial, tiempo_final;
 	tomar_tiempo (&tiempo_inicial);
+	//srand (time (NULL));
 	for (i = 0; i < geneticos.it_max; i ++)
 	{
 		FireFly (poblacion, funcion_objetivo, geneticos, (i + 1));
@@ -411,7 +441,7 @@ void solve (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG genetico
 		if ((tiempo_final - tiempo_inicial) >= (geneticos.tiempo_maximo * 60))
 		{
 			printf ("\n\n\n\n\n\tCRITERIO DE FINALIZACIÓN: TIEMPO MÁXIMO ALCANZADO\n\n\n\n");
-			break;
+			exit (0);
 		}
 	}
 	printf ("\n\n\n\n\n\tCRITERIO DE FINALIZACIÓN: ITERACIONES MÁXIMAS ALCANZADAS\n\n\n\n");
@@ -426,7 +456,6 @@ void FireFly (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneti
 	float * valor_funcion_objetivo = malloc (sizeof (float) * (geneticos.integrantes));
 	float * aleat = (float *) malloc (sizeof (float) * (geneticos.integrantes));
 	float * pAcumE = (float *) malloc (sizeof (float) * (geneticos.integrantes));
-	srand (time (NULL));
 	for (i = 0, sumaZ = 0, pAcum = 0; i < geneticos.integrantes; i ++)
 	{
 		valor_funcion_objetivo [i] = evaluar_funcion_objetivo (poblacion, funcion_objetivo, i);
@@ -518,9 +547,7 @@ char * cruzar_vectores (char * vector1, char * vector2)
 {
 	int i, cromosomas_vector1;
 	int tam = strlen (vector1);
-	srand (time (NULL));
 	cromosomas_vector1 = (rand () % (tam - 1)) + 1;
-	srand (time (NULL));
 	i = (rand () % 2);
 	if (i)
 	{
@@ -543,7 +570,6 @@ char * mutar_vector (char * vector)
 	//Se obtiene el número de cromosomas del vector
 	int tam = strlen (vector);
 	int bit;
-	srand (time (NULL));
 	//Se genera aleatoriamente el bit en el que se realizará la mutación
 	bit = (rand () % tam);
 	//Se cambia el cromosoma por 0 o 1 según corresponda
@@ -559,13 +585,13 @@ char * mutar_vector (char * vector)
 //Toma la hora actual en walltime
 void tomar_tiempo (double * walltime)
 {
-	double mega = 1.0e-6;
+	float mega = 1.0e-6;
 	struct rusage buffer;
 	struct timeval tp;
 	struct timezone tzp;
 	getrusage(RUSAGE_SELF, &buffer);
 	gettimeofday(&tp, &tzp);
-	*walltime = (double) tp.tv_sec + 1.0e-6 * tp.tv_usec; 
+	*walltime = (float) tp.tv_sec + 1.0e-6 * tp.tv_usec; 
 }
 
 void imprimir_valores (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneticos, float * valor_funcion_objetivo, int iteracion)
@@ -589,7 +615,7 @@ void imprimir_valores (integrante ** poblacion, Z funcion_objetivo, Condiciones_
 	for (i = 0; i < filas; i ++)
 	{
 		for (j = 0; j < columnas; j ++)
-			fprintf (archivo, "Valor de %c%d:\t%f\n", (funcion_objetivo.variables [j]), j, (poblacion [i][j].momentum));
+			fprintf (archivo, "Valor de %c%d:\t%f\n", (funcion_objetivo.variables [j]), i, (poblacion [i][j].momentum));
 		fprintf (archivo, "Valor de F.O:\t%f\n\n", (valor_funcion_objetivo [i]));
 	}
 	fprintf (archivo, "\n\n");
