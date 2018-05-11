@@ -124,7 +124,7 @@ Z cuerpo_funcion_objetivo (Z objetivo)
 //Retorna la lista de restricciones del problema
 lista obtener_restricciones ()
 {
-	boolean otra = TRUE;													//Inicializar un booleano en verdadero 
+	boolean otra = TRUE;													//Inicializar un booleano en verdadero
 	char i = 0;																//Contador para saber el número de restricciones
 	lista restricciones;													//Lista para almacenar todas las restricciones
 	restriccion res;														//Nodo que almacenará cada restricción
@@ -432,7 +432,6 @@ void solve (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG genetico
 	char * fuerte1 = (char *) malloc (sizeof (char));
 	double tiempo_inicial, tiempo_final;
 	tomar_tiempo (&tiempo_inicial);
-	//srand (time (NULL));
 	for (i = 0; i < geneticos.it_max; i ++)
 	{
 		FireFly (poblacion, funcion_objetivo, geneticos, (i + 1));
@@ -524,7 +523,7 @@ integrante ** generar_nueva_poblacion (integrante ** poblacion, Z funcion_objeti
 		{
 			num_bits = strlen (poblacion [0][j].binario);
 			char * nuevo_vector = (char *) malloc (sizeof (char) * num_bits);
-			if (fuerte2 < 0)
+			if (fuerte2 > 0)
 				nuevo_vector = mutar_vector ((poblacion [fuerte1][j]).binario);
 			else
 				nuevo_vector = cruzar_vectores ((poblacion [fuerte1][j]).binario, (poblacion [fuerte2][j]).binario);
@@ -545,23 +544,14 @@ integrante ** generar_nueva_poblacion (integrante ** poblacion, Z funcion_objeti
 //Retorna la cruza de 2 vectores
 char * cruzar_vectores (char * vector1, char * vector2)
 {
-	int i, cromosomas_vector1;
+	int i;
 	int tam = strlen (vector1);
-	cromosomas_vector1 = (rand () % (tam - 1)) + 1;
-	i = (rand () % 2);
-	if (i)
-	{
-		for (i = cromosomas_vector1; i < tam; i ++)
+	int cromosomas_vector1 = ((rand())%tam);
+	for (i = 0; i < cromosomas_vector1; i ++){
 			vector1 [i] = vector2 [i];
-		vector1 [i] = '\0';
-		return vector1;
-	}else
-	{
-		for (i = cromosomas_vector1; i < tam; i ++)
-			vector2 [i] = vector1 [i];
-		vector2 [i] = '\0';
-		return vector2;
 	}
+	vector1 [tam] = '\0';
+	return vector1;
 }
 
 //Retorna un vector mutado en un bit
@@ -569,14 +559,15 @@ char * mutar_vector (char * vector)
 {
 	//Se obtiene el número de cromosomas del vector
 	int tam = strlen (vector);
-	int bit;
 	//Se genera aleatoriamente el bit en el que se realizará la mutación
-	bit = (rand () % tam);
+	char bit = ((rand())%tam);
 	//Se cambia el cromosoma por 0 o 1 según corresponda
-	if (vector [bit] == '0')
+	if (vector [bit] == '0'){
 		vector [bit] = '1';
-	else if (vector [bit] == '1')
+	}
+	else if (vector [bit] == '1'){
 		vector [bit] = '0';
+	}
 	else
 		printf ("\n\nError al mutar el vector '%s'\n\n", vector);
 	return vector;
@@ -591,7 +582,7 @@ void tomar_tiempo (double * walltime)
 	struct timezone tzp;
 	getrusage(RUSAGE_SELF, &buffer);
 	gettimeofday(&tp, &tzp);
-	*walltime = (float) tp.tv_sec + 1.0e-6 * tp.tv_usec; 
+	*walltime = (float) tp.tv_sec + 1.0e-6 * tp.tv_usec;
 }
 
 void imprimir_valores (integrante ** poblacion, Z funcion_objetivo, Condiciones_AG geneticos, float * valor_funcion_objetivo, int iteracion)
